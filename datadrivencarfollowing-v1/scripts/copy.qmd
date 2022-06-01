@@ -1,0 +1,146 @@
+---
+title: "Car following: EDA for NGSIM Dataset"
+author: "Section C Group 5: Vineet Dhamija, Neel Chaudhari, Rakesh Singh"
+bibliography: references.bib
+toc: true
+number-sections: true
+highlight-style: pygments
+format:
+  html:
+    code-fold: true
+    code-summary: "Show the code"
+---
+
+## Overview
+
+The data being analyzed in the EDA is NGSIM Dataset. Researchers for the Next Generation Simulation (NGSIM) program collected detailed vehicle trajectory data on southbound US 101 and Lankershim Boulevard in Los Angeles, CA, eastbound I-80 in Emeryville, CA and Peachtree Street in Atlanta, Georgia. Data was collected through a network of synchronized digital video cameras. NGVIDEO, a customized software application developed for the NGSIM program, transcribed the vehicle trajectory data from the video. This vehicle trajectory data provided the precise location of each vehicle within the study area every one-tenth of a second, resulting in detailed lane positions and locations relative to other vehicles[@NGSIM].
+
+
+```{python}
+#Import all the libraries
+import numpy as np 
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings("ignore")
+def sniff(df):
+    with pd.option_context("display.max_colwidth", 20):
+        info = pd.DataFrame()
+        info['data type'] = df.dtypes
+        info['percent missing'] = df.isnull().sum()*100/len(df)
+        info['No. unique'] = df.apply(lambda x: len(x.unique()))
+        info['Min Value'] = df.apply(lambda x: np.nanmin(x))
+        info['Max Value'] = df.apply(lambda x: np.nanmax(x))
+        info['unique values'] = df.apply(lambda x: x.unique())
+        return info.sort_values('data type')
+```
+
+Below is a quick overview of all the Columns of the Data, including their Data Type, Minimum value, Maximum value, No. of Unique values and their small list of unique Values. Apart from a few fields all rows have values populated. There exists a total of 3233 unique vehicle information for which data has been collected for a 0.1 second interval which has been collected on 4 different US motorways(See @fig-Location in @sec-EDA). The missing information exists for US-101 and I-80 highway as the details do not exist on those motorways. The data is consistent to the dictionary available and as per the Data Type. Detailed Descrition of the observations and data sanctity is discussed in the @sec-EDA
+
+
+```{python}
+#Generic path so that we dont need to upload data to git. 
+from pathlib import Path
+p = Path().cwd()
+stringpath= str(p)[0:str(p).rfind('\\')] + '\\data'
+ngsimfile=stringpath + '/' + 'Next_Generation_Simulation__NGSIM__Vehicle_Trajectories_and_Supporting_Data.csv'
+ngsim = pd.read_csv(ngsimfile,low_memory=False)
+sniffed_data= sniff(ngsim)
+sniffed_data
+```
+
+
+## Fitness
+
+The Data is sufficient to meet 
+
+## Ethical Assessment
+
+## EDA {#sec-EDA}
+```{python}
+#| label: fig-Location
+#| fig-cap: Location of Highway
+
+sns.countplot(data=ngsim,x='Location')
+plt.show()  
+
+```
+
+Observations:
+1. Even though there are 3233 vehicles but the range is present from vehicle ID 1 to ID 3366.
+2. Frame ID exist from 1-11691 with frame difference of 1. 
+3. There are a total of 1837 frames with range from 2-2434 with missing frame numbers but no row with missing frame details. 
+4. Even though there are only 3366 Cars in Vehicle ID, there exists 1 additional in Following Car Id, additional value is 0, which is present in Following.
+5. Even though there are only 3366 Cars in Vehicle ID, there exists 1 additional in Preceding Car Id, additional value is 0, which is present in Preceding but not in IDs. There are 6 Car IDs which are not preceding any vehicle.
+6. Vehicle type and info based on Class:
+    1. Vehicle Class 1: These have short length(~10) and width(4). 
+    2. Vehicle Class 2: These have Medium length(~15) and medium to large width(6-7). 
+    3. Vehicle Class 3: These have large length(>30) and largest width(>8). 
+7. Most vehicles drive very close to the Preceeding vehicle. There are very less cases of big Space between vehicles in Class Type 1, increases slightly with Class Type 2 and even more with Class Type 3 
+8. For Most cases, Space and Time headway have positive relationship, if one increases, so does the other> however there are scenarios where even with very big space the timeheadway is almost zero.  
+
+```{python}
+ngsim["Vehicle_class"] = ngsim["v_Class"].map({1:"motorcycle", 2: "auto", 3: "truck"})
+sns.scatterplot(data=ngsim,x='Space_Headway',y='Time_Headway',hue='v_Class')
+plt.show()
+sns.scatterplot(data=ngsim,x='Space_Headway',y='v_length',hue='v_Class')
+plt.show()
+sns.boxplot(data=ngsim,y='v_length',x='v_Class')
+plt.show()
+sns.boxplot(data=ngsim,y='v_Width',x='v_Class')
+plt.show()
+sns.boxplot(data=ngsim,y='Space_Headway',x='v_Class')
+plt.show()
+sns.scatterplot(data=ngsim, x='v_Width', y='Space_Headway')
+plt.show()
+sns.scatterplot(data=ngsim, x='v_Width', y='Space_Headway', hue = "Location")
+plt.show()
+PrecedingButNoID = set(ngsim["Preceding"].unique()) - set(ngsim["Vehicle_ID"].unique())
+IDButNoPreceding = set(ngsim["Vehicle_ID"].unique()) - set(ngsim["Preceding"].unique())
+FollowingButNoID = set(ngsim["Following"].unique()) - set(ngsim["Vehicle_ID"].unique())
+IDButNoFollowing = set(ngsim["Vehicle_ID"].unique()) - set(ngsim["Following"].unique())
+print(f"Preceding Vehicle But Not in ID: {PrecedingButNoID}")
+print(f"ID But Not in Preceding Vehicle: {IDButNoPreceding}")
+print(f"Following Vehicle But Not in ID: {FollowingButNoID}")
+print(f"ID But Not in Following Vehicle: {IDButNoFollowing}")
+sns.countplot(data=ngsim,x='v_Class')
+plt.show()  
+sns.countplot(data=ngsim,x='Lane_ID')
+plt.show()  
+sns.countplot(data=ngsim,x='Location')
+plt.show()  
+```
+
+```{python}
+
+sns.boxplot(data=ngsim,y='Space_Headway',x='Location')
+plt.show()
+#Box plots for accerelation vs. relevent categorical varible
+sns.boxplot(data=ngsim, x='v_Class', y='v_Vel')
+plt.show()
+sns.boxplot(data=ngsim, x='Location', y='v_Vel')
+plt.show()
+sns.boxplot(data=ngsim, x='Direction', y='v_Vel')
+plt.show()
+sns.boxplot(data=ngsim, x='Movement', y='v_Vel')
+plt.show()
+sns.boxplot(data=ngsim, x='Lane_ID', y='v_Vel')
+plt.show()
+#Box plots for accerelation vs. relevent categorical varible
+sns.boxplot(data=ngsim, x='v_Class', y='v_Acc')
+plt.show()
+sns.boxplot(data=ngsim, x='Location', y='v_Acc')
+plt.show()
+sns.boxplot(data=ngsim, x='Direction', y='v_Acc')
+plt.show()
+sns.boxplot(data=ngsim, x='Movement', y='v_Acc')
+plt.show()
+sns.boxplot(data=ngsim, x='Lane_ID', y='v_Acc')
+plt.show()
+
+```
+
+
+
+## References
