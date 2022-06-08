@@ -138,7 +138,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <section id="overview" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="overview"><span class="header-section-number">1</span> Overview</h2>
-<p>The data being analyzed in the EDA is NGSIM Dataset. Researchers for the Next Generation Simulation (NGSIM) program collected detailed vehicle trajectory data on southbound US 101 and Lankershim Boulevard in Los Angeles, CA, eastbound I-80 in Emeryville, CA and Peachtree Street in Atlanta, Georgia. Data was collected through a network of synchronized digital video cameras. NGVIDEO, a customized software application developed for the NGSIM program, transcribed the vehicle trajectory data from the video. This vehicle trajectory data provided the precise location of each vehicle within the study area every one-tenth of a second, resulting in detailed lane positions and locations relative to other vehicles.[<span class="citation" data-cites="misc">@misc</span>]<span class="citation" data-cites="NGSIM">[@NGSIM]</span></p>
+<p>The data being analyzed in the EDA is NGSIM Dataset. Researchers for the Next Generation Simulation (NGSIM) program collected detailed vehicle trajectory data on southbound US 101 and Lankershim Boulevard in Los Angeles, CA, eastbound I-80 in Emeryville, CA and Peachtree Street in Atlanta, Georgia. Data was collected through a network of synchronized digital video cameras. NGVIDEO, a customized software application developed for the NGSIM program, transcribed the vehicle trajectory data from the video. This vehicle trajectory data provided the precise location of each vehicle within the study area every one-tenth of a second, resulting in detailed lane positions and locations relative to other vehicles.</p>
 <div class="cell" data-execution_count="1">
 <details>
 <summary>Show the code</summary>
@@ -174,7 +174,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>sniffed_data<span class="op">=</span> sniff(ngsim)</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>sniffed_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="2">
+<div class="cell-output cell-output-display" data-execution_count="12">
 
 <div>
 
@@ -424,10 +424,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="fitness" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="fitness"><span class="header-section-number">2</span> Fitness</h2>
-<p>Below are the research Questions we had posed: 1. Explore various research papers which claim to have predicted the Acceleration and jerk with least error possible with the error method selected by them. Upon re-creating the models with NGSIM dataset, does their claim hold true?</p>
-<pre><code>2. Is the model mentioned in the research paper justified in making prediction for acceleration and jerk, predicting the outcome matching with the actuals in the range of claimed error predictions?  
-
-3. Does the new model created by us have better outcome of Acceleration when compared to other papers?</code></pre>
+<p>Below are the research Questions we had posed: 1. Explore various research papers which claim to have predicted the Acceleration and jerk with least error possible with the error method selected by them. Upon re-creating the models with NGSIM dataset, does their claim hold true? 2. Is the model mentioned in the research paper justified in making prediction for acceleration and jerk, predicting the outcome matching with the actuals in the range of claimed error predictions?<br>
+3. Does the new model created by us have better outcome of Acceleration when compared to other papers?</p>
 <p>The data available in the NGSIM dataset is enough for us to validate any car following model as we have various available completed Trajectories having the Acceleration and Speed information for us to predict and re-create the models outcome for Acceleration prediction. We would also be able to use this data to verify our Car Following Data Driven model using the Speed, Acceleration and position information for the Following and Leader vehicle.</p>
 </section>
 <section id="ethical-assessment" class="level2" data-number="3">
@@ -436,31 +434,31 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="observation-summary" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="observation-summary"><span class="header-section-number">4</span> Observation Summary</h2>
-<pre><code>1. Even though there are 3233 vehicles but the range is present from vehicle ID 1 to ID 3366. 
-2. Frame ID exist from 1-11691 with frame difference of 1. 
-3. There are a total of 1837 frames with range from 2-2434 with missing frame numbers but no row with missing frame details. 
-4. Even though there are only 3366 Cars in Vehicle ID, there exists 1 additional in Following Car Id, additional value is 0, which is present in Following.
-5. Even though there are only 3366 Cars in Vehicle ID, there exists 1 additional in Preceding Car Id, additional value is 0, which is present in Preceding but not in IDs. There are 6 Car IDs which are not preceding any vehicle.
-6. Vehicle type and info based on Class:
-    1. Vehicle Class 1: These have short length(~10) and width(4). 
-    2. Vehicle Class 2: These have Medium length(~15) and medium to large width(6-7). 
-    3. Vehicle Class 3: These have large length(&gt;30) and largest width(&gt;8). 
-7. Most vehicles drive very close to the Preceeding vehicle. There are very less cases of big Space between vehicles in Class Type 1, increases slightly with Class Type 2 and even more with Class Type 3 
-8. For Most cases, Space and Time headway have positive relationship, if one increases, so does the other, however there are scenarios where even with very big space the timeheadway is almost zero.  </code></pre>
+<pre><code>1 Even though there are 3233 vehicles but the range is present from vehicle ID 1 to ID 3366. &lt;br /&gt;
+2. Frame ID exist from 1-11691 with frame difference of 1. &lt;br /&gt;
+3. There are a total of 1837 frames with range from 2-2434 with missing frame numbers but no row with missing frame details. &lt;br /&gt;
+4. Even though there are only 3366 Cars in Vehicle ID, there exists 1 additional in Following Car Id, additional value is 0, which is present in Following.&lt;br /&gt;
+5. Even though there are only 3366 Cars in Vehicle ID, there exists 1 additional in Preceding Car Id, additional value is 0, which is present in Preceding but not in IDs. There are 6 Car IDs which are not preceding any vehicle.&lt;br /&gt;
+6. Vehicle type and info based on Class:&lt;br /&gt;
+    1. Vehicle Class 1: These have short length(~10) and width(4). &lt;br /&gt;
+    2. Vehicle Class 2: These have Medium length(~15) and medium to large width(6-7). &lt;br /&gt;
+    3. Vehicle Class 3: These have large length(&gt;30) and largest width(&gt;8). &lt;br /&gt;
+7. Most vehicles drive very close to the Preceeding vehicle. There are very less cases of big Space between vehicles in Class Type 1, increases slightly with Class Type 2 and even more with Class Type 3 &lt;br /&gt;
+8. For Most cases, Space and Time headway have positive relationship, if one increases, so does the other, however there are scenarios where even with very big space the timeheadway is almost zero.  &lt;br /&gt;</code></pre>
 </section>
 <section id="sec-EDA" class="level2" data-number="5">
 <h2 data-number="5" class="anchored" data-anchor-id="sec-EDA"><span class="header-section-number">5</span> EDA</h2>
 <div class="cell" data-execution_count="3">
 <details>
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sns.countplot(data<span class="op">=</span>ngsim,x<span class="op">=</span><span class="st">'Location'</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>plt.show()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sns.countplot(data<span class="op">=</span>ngsim,x<span class="op">=</span><span class="st">'Location'</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>plt.show()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div id="fig-location" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><img src="SectionC_Group5-NGSIM-EDA_files/figure-html/cell-4-output-1.png" width="576" height="436" class="figure-img"></p>
-<p></p><figcaption aria-hidden="true" class="figure-caption">Location of Highway</figcaption><p></p>
+<p><img src="SectionC_Group5-NGSIM-EDA_files/figure-html/fig-location-output-1.png" width="576" height="436" class="figure-img"></p>
+<p></p><figcaption aria-hidden="true" class="figure-caption">Figure 1: Location of Highway</figcaption><p></p>
 </figure>
 </div>
 </div>
@@ -468,33 +466,33 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell" data-execution_count="4">
 <details>
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sns.countplot(data<span class="op">=</span>ngsim,x<span class="op">=</span><span class="st">'v_Class'</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>plt.show()  </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>sns.countplot(data<span class="op">=</span>ngsim,x<span class="op">=</span><span class="st">'Lane_ID'</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>plt.show()  </span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>ngsim[<span class="st">"Vehicle_class"</span>] <span class="op">=</span> ngsim[<span class="st">"v_Class"</span>].<span class="bu">map</span>({<span class="dv">1</span>:<span class="st">"motorcycle"</span>, <span class="dv">2</span>: <span class="st">"auto"</span>, <span class="dv">3</span>: <span class="st">"truck"</span>})</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>ngsim,x<span class="op">=</span><span class="st">'Space_Headway'</span>,y<span class="op">=</span><span class="st">'Time_Headway'</span>,hue<span class="op">=</span><span class="st">'v_Class'</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>ngsim,x<span class="op">=</span><span class="st">'Space_Headway'</span>,y<span class="op">=</span><span class="st">'v_length'</span>,hue<span class="op">=</span><span class="st">'v_Class'</span>)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim,y<span class="op">=</span><span class="st">'v_length'</span>,x<span class="op">=</span><span class="st">'v_Class'</span>)</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim,y<span class="op">=</span><span class="st">'v_Width'</span>,x<span class="op">=</span><span class="st">'v_Class'</span>)</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim,y<span class="op">=</span><span class="st">'Space_Headway'</span>,x<span class="op">=</span><span class="st">'v_Class'</span>)</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'v_Width'</span>, y<span class="op">=</span><span class="st">'Space_Headway'</span>)</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'v_Width'</span>, y<span class="op">=</span><span class="st">'Space_Headway'</span>, hue <span class="op">=</span> <span class="st">"Location"</span>)</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>PrecedingButNoID <span class="op">=</span> <span class="bu">set</span>(ngsim[<span class="st">"Preceding"</span>].unique()) <span class="op">-</span> <span class="bu">set</span>(ngsim[<span class="st">"Vehicle_ID"</span>].unique())</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>IDButNoPreceding <span class="op">=</span> <span class="bu">set</span>(ngsim[<span class="st">"Vehicle_ID"</span>].unique()) <span class="op">-</span> <span class="bu">set</span>(ngsim[<span class="st">"Preceding"</span>].unique())</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>FollowingButNoID <span class="op">=</span> <span class="bu">set</span>(ngsim[<span class="st">"Following"</span>].unique()) <span class="op">-</span> <span class="bu">set</span>(ngsim[<span class="st">"Vehicle_ID"</span>].unique())</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>IDButNoFollowing <span class="op">=</span> <span class="bu">set</span>(ngsim[<span class="st">"Vehicle_ID"</span>].unique()) <span class="op">-</span> <span class="bu">set</span>(ngsim[<span class="st">"Following"</span>].unique())</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Preceding Vehicle But Not in ID: </span><span class="sc">{</span>PrecedingButNoID<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"ID But Not in Preceding Vehicle: </span><span class="sc">{</span>IDButNoPreceding<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Following Vehicle But Not in ID: </span><span class="sc">{</span>FollowingButNoID<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"ID But Not in Following Vehicle: </span><span class="sc">{</span>IDButNoFollowing<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sns.countplot(data<span class="op">=</span>ngsim,x<span class="op">=</span><span class="st">'v_Class'</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>plt.show()  </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>sns.countplot(data<span class="op">=</span>ngsim,x<span class="op">=</span><span class="st">'Lane_ID'</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>plt.show()  </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>ngsim[<span class="st">"Vehicle_class"</span>] <span class="op">=</span> ngsim[<span class="st">"v_Class"</span>].<span class="bu">map</span>({<span class="dv">1</span>:<span class="st">"motorcycle"</span>, <span class="dv">2</span>: <span class="st">"auto"</span>, <span class="dv">3</span>: <span class="st">"truck"</span>})</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>ngsim,x<span class="op">=</span><span class="st">'Space_Headway'</span>,y<span class="op">=</span><span class="st">'Time_Headway'</span>,hue<span class="op">=</span><span class="st">'v_Class'</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>ngsim,x<span class="op">=</span><span class="st">'Space_Headway'</span>,y<span class="op">=</span><span class="st">'v_length'</span>,hue<span class="op">=</span><span class="st">'v_Class'</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim,y<span class="op">=</span><span class="st">'v_length'</span>,x<span class="op">=</span><span class="st">'v_Class'</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim,y<span class="op">=</span><span class="st">'v_Width'</span>,x<span class="op">=</span><span class="st">'v_Class'</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim,y<span class="op">=</span><span class="st">'Space_Headway'</span>,x<span class="op">=</span><span class="st">'v_Class'</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'v_Width'</span>, y<span class="op">=</span><span class="st">'Space_Headway'</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'v_Width'</span>, y<span class="op">=</span><span class="st">'Space_Headway'</span>, hue <span class="op">=</span> <span class="st">"Location"</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>PrecedingButNoID <span class="op">=</span> <span class="bu">set</span>(ngsim[<span class="st">"Preceding"</span>].unique()) <span class="op">-</span> <span class="bu">set</span>(ngsim[<span class="st">"Vehicle_ID"</span>].unique())</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>IDButNoPreceding <span class="op">=</span> <span class="bu">set</span>(ngsim[<span class="st">"Vehicle_ID"</span>].unique()) <span class="op">-</span> <span class="bu">set</span>(ngsim[<span class="st">"Preceding"</span>].unique())</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>FollowingButNoID <span class="op">=</span> <span class="bu">set</span>(ngsim[<span class="st">"Following"</span>].unique()) <span class="op">-</span> <span class="bu">set</span>(ngsim[<span class="st">"Vehicle_ID"</span>].unique())</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>IDButNoFollowing <span class="op">=</span> <span class="bu">set</span>(ngsim[<span class="st">"Vehicle_ID"</span>].unique()) <span class="op">-</span> <span class="bu">set</span>(ngsim[<span class="st">"Following"</span>].unique())</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Preceding Vehicle But Not in ID: </span><span class="sc">{</span>PrecedingButNoID<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"ID But Not in Preceding Vehicle: </span><span class="sc">{</span>IDButNoPreceding<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Following Vehicle But Not in ID: </span><span class="sc">{</span>FollowingButNoID<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"ID But Not in Following Vehicle: </span><span class="sc">{</span>IDButNoFollowing<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <p><img src="SectionC_Group5-NGSIM-EDA_files/figure-html/cell-5-output-1.png" width="589" height="436"></p>
@@ -533,30 +531,30 @@ ID But Not in Following Vehicle: set()</code></pre>
 <div class="cell" data-execution_count="5">
 <details>
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim,y<span class="op">=</span><span class="st">'Space_Headway'</span>,x<span class="op">=</span><span class="st">'Location'</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Box plots for accerelation vs. relevent categorical varible</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'v_Class'</span>, y<span class="op">=</span><span class="st">'v_Vel'</span>)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'Location'</span>, y<span class="op">=</span><span class="st">'v_Vel'</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'Direction'</span>, y<span class="op">=</span><span class="st">'v_Vel'</span>)</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'Movement'</span>, y<span class="op">=</span><span class="st">'v_Vel'</span>)</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'Lane_ID'</span>, y<span class="op">=</span><span class="st">'v_Vel'</span>)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#Box plots for accerelation vs. relevent categorical varible</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'v_Class'</span>, y<span class="op">=</span><span class="st">'v_Acc'</span>)</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'Location'</span>, y<span class="op">=</span><span class="st">'v_Acc'</span>)</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'Direction'</span>, y<span class="op">=</span><span class="st">'v_Acc'</span>)</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'Movement'</span>, y<span class="op">=</span><span class="st">'v_Acc'</span>)</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'Lane_ID'</span>, y<span class="op">=</span><span class="st">'v_Acc'</span>)</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim,y<span class="op">=</span><span class="st">'Space_Headway'</span>,x<span class="op">=</span><span class="st">'Location'</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Box plots for accerelation vs. relevent categorical varible</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'v_Class'</span>, y<span class="op">=</span><span class="st">'v_Vel'</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'Location'</span>, y<span class="op">=</span><span class="st">'v_Vel'</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'Direction'</span>, y<span class="op">=</span><span class="st">'v_Vel'</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'Movement'</span>, y<span class="op">=</span><span class="st">'v_Vel'</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'Lane_ID'</span>, y<span class="op">=</span><span class="st">'v_Vel'</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">#Box plots for accerelation vs. relevent categorical varible</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'v_Class'</span>, y<span class="op">=</span><span class="st">'v_Acc'</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'Location'</span>, y<span class="op">=</span><span class="st">'v_Acc'</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'Direction'</span>, y<span class="op">=</span><span class="st">'v_Acc'</span>)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'Movement'</span>, y<span class="op">=</span><span class="st">'v_Acc'</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>ngsim, x<span class="op">=</span><span class="st">'Lane_ID'</span>, y<span class="op">=</span><span class="st">'v_Acc'</span>)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <p><img src="SectionC_Group5-NGSIM-EDA_files/figure-html/cell-6-output-1.png" width="602" height="422"></p>

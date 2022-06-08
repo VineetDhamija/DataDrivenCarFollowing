@@ -12,7 +12,7 @@ format:
 
 ## Overview
 
-The data being analyzed in the EDA is NGSIM Dataset. Researchers for the Next Generation Simulation (NGSIM) program collected detailed vehicle trajectory data on southbound US 101 and Lankershim Boulevard in Los Angeles, CA, eastbound I-80 in Emeryville, CA and Peachtree Street in Atlanta, Georgia. Data was collected through a network of synchronized digital video cameras. NGVIDEO, a customized software application developed for the NGSIM program, transcribed the vehicle trajectory data from the video. This vehicle trajectory data provided the precise location of each vehicle within the study area every one-tenth of a second, resulting in detailed lane positions and locations relative to other vehicles.
+The data being analyzed in the EDA is NGSIM Dataset. Researchers for the Next Generation Simulation (NGSIM) program collected detailed vehicle trajectory data on southbound US 101 and Lankershim Boulevard in Los Angeles, CA, eastbound I-80 in Emeryville, CA and Peachtree Street in Atlanta, Georgia. Data was collected through a network of synchronized digital video cameras. NGVIDEO, a customized software application developed for the NGSIM program, transcribed the vehicle trajectory data from the video. This vehicle trajectory data provided the precise location of each vehicle within the study area every one-tenth of a second, resulting in detailed lane positions and locations relative to other vehicles.[@misc][@NGSIM]
 
 ```{python}
 #Import all the libraries
@@ -50,9 +50,11 @@ sniffed_data
 ## Fitness
 
 Below are the research Questions we had posed:
-1.	Explore various research papers which claim to have predicted the Acceleration and jerk with least error possible with the error method selected by them. Upon re-creating the models with NGSIM dataset, does their claim hold true? 
-2.	Is the model mentioned in the research paper justified in making prediction for acceleration and jerk, predicting the outcome matching with the actuals in the range of claimed error predictions?  
-3.	Does the new model created by us have better outcome of Acceleration when compared to other papers?
+    1. Explore various research papers which claim to have predicted the Acceleration and jerk with least error possible with the error method selected by them. Upon re-creating the models with NGSIM dataset, does their claim hold true? 
+
+    2. Is the model mentioned in the research paper justified in making prediction for acceleration and jerk, predicting the outcome matching with the actuals in the range of claimed error predictions?  
+
+    3. Does the new model created by us have better outcome of Acceleration when compared to other papers?
 
 The data available in the NGSIM dataset is enough for us to validate any car following model as we have various available completed Trajectories having the Acceleration and Speed information for us to predict and re-create the models outcome for Acceleration prediction. 
 We would also be able to use this data to verify our Car Following Data Driven model using the Speed, Acceleration and position information for the Following and Leader vehicle. 
@@ -62,22 +64,21 @@ We would also be able to use this data to verify our Car Following Data Driven m
 The Ethical Checklist which has been created for the Project is present in the same folder in git
 
 ## Observation Summary
-    
-    1 Even though there are 3233 vehicles but the range is present from vehicle ID 1 to ID 3366. <br />
-    2. Frame ID exist from 1-11691 with frame difference of 1. <br />
-    3. There are a total of 1837 frames with range from 2-2434 with missing frame numbers but no row with missing frame details. <br />
-    4. Even though there are only 3366 Cars in Vehicle ID, there exists 1 additional in Following Car Id, additional value is 0, which is present in Following.<br />
-    5. Even though there are only 3366 Cars in Vehicle ID, there exists 1 additional in Preceding Car Id, additional value is 0, which is present in Preceding but not in IDs. There are 6 Car IDs which are not preceding any vehicle.<br />
-    6. Vehicle type and info based on Class:<br />
-        1. Vehicle Class 1: These have short length(~10) and width(4). <br />
-        2. Vehicle Class 2: These have Medium length(~15) and medium to large width(6-7). <br />
-        3. Vehicle Class 3: These have large length(>30) and largest width(>8). <br />
-    7. Most vehicles drive very close to the Preceeding vehicle. There are very less cases of big Space between vehicles in Class Type 1, increases slightly with Class Type 2 and even more with Class Type 3 <br />
-    8. For Most cases, Space and Time headway have positive relationship, if one increases, so does the other, however there are scenarios where even with very big space the timeheadway is almost zero.  <br />
+    1. Even though there are 3233 vehicles but the range is present from vehicle ID 1 to ID 3366. 
+    2. Frame ID exist from 1-11691 with frame difference of 1. 
+    3. There are a total of 1837 frames with range from 2-2434 with missing frame numbers but no row with missing frame details. 
+    4. Even though there are only 3366 Cars in Vehicle ID, there exists 1 additional in Following Car Id, additional value is 0, which is present in Following.
+    5. Even though there are only 3366 Cars in Vehicle ID, there exists 1 additional in Preceding Car Id, additional value is 0, which is present in Preceding but not in IDs. There are 6 Car IDs which are not preceding any vehicle.
+    6. Vehicle type and info based on Class:
+        1. Vehicle Class 1: These have short length(~10) and width(4). 
+        2. Vehicle Class 2: These have Medium length(~15) and medium to large width(6-7). 
+        3. Vehicle Class 3: These have large length(>30) and largest width(>8). 
+    7. Most vehicles drive very close to the Preceeding vehicle. There are very less cases of big Space between vehicles in Class Type 1, increases slightly with Class Type 2 and even more with Class Type 3 
+    8. For Most cases, Space and Time headway have positive relationship, if one increases, so does the other, however there are scenarios where even with very big space the timeheadway is almost zero.  
 
 ## EDA {#sec-EDA}
 ```{python}
-#| label: fig-Location
+#| label: @fig-Location
 #| fig-cap: Location of Highway
 
 sns.countplot(data=ngsim,x='Location')
