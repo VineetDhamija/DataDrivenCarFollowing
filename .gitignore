@@ -129,5 +129,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 datadrivencarfollowing-v1/data/Next_Generation_Simulation__NGSIM__Vehicle_Trajectories_and_Supporting_Data.csv
+<<<<<<< Updated upstream
 data/
 datadrivencarfollowing-v1/scripts/EDA_NGSIM_NC.ipynb
+=======
+data/
+>>>>>>> Stashed changes
