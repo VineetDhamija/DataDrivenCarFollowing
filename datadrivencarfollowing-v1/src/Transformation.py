@@ -2,45 +2,37 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
-
 class Transformation():
-    p = Path().cwd()
-    stringpath = str(p)[0:str(p).rfind('\\')] + '\\data'
-
-    def __init__(self):
-        self.initialize()
-
-    def readInput(self, fileName):
-        '''
-
-        '''
-        print(f"original File path: {self.p}")
-        print(f"Data File path: { self.stringpath}")
-        ngsimfile = self.stringpath + '/' + fileName + '.csv'
-        df = pd.read_csv(ngsimfile, low_memory=False)
-        return df
-
     def trial_func(self):
         '''
         Function to verofy that the class works
         '''
-        print(f"Transformation:Class called")  # duplicate values have been removed")
+        print(f"transform:Class called")  # duplicate values have been removed")
 
-        # return True
+        return True
 
     def convertFeetToMetre(self, df):
         '''
         Convert the input variables which exist in Feet to Metres or Feet/Second to Metre/Second and so on. 
+        Input: 
+            df
+        Ouptut: 
+            df
         '''
         df['v_length'] = df['v_length']*0.3048
         df['Space_Headway'] = df['Space_Headway']*0.3048
         df['v_Vel'] = df['v_Vel']*0.3048
         df['v_Acc'] = df['v_Acc']*0.3048
+        
         return df
 
     def dropNotRequiredColumns(self, df):
         '''
-        Drop the columns that are not required for our Model 
+        Drop the columns that are not required for our Model.
+        Input: 
+            df
+        Ouptut: 
+            df
         '''
         df = df.drop(columns=['Movement', 'Direction', 'Section_ID', 'Int_ID',
                      'D_Zone', 'O_Zone', 'Following', 'v_Width', 'Total_Frames'])
@@ -49,17 +41,28 @@ class Transformation():
     def createColumnPlaceholders(self, df):
         '''
         Create PLaceholder for columns that will be generated and populated to use in the Model 
+        Input: 
+            df
+        Ouptut: 
+            df
         '''
         df['Preceding_Vehicle_Class'] = np.NaN
         df['Rear_to_Front_Space_Headway'] = np.NaN
         df['Front_To_Rear_Time_Headway'] = np.NaN
         df['Velocity Difference_Following-Preceding'] = np.NaN
         df['Acceleration Difference_Following-Preceding'] = np.NaN
+        df['L-F_Pair'] = df['Preceding'].astype(str) + '-' + df['Vehicle_ID'].astype(str)
+        df["v_Class_Name"] = df["v_Class"].map({1:"Motorcycle", 2: "Car", 3: "Heavy Vehicle"})
+        df['Relative_Time']= df['Global_Time'] - df['Global_Time'].min() + 1
         return df
 
     def bifurcateHighways(self, df):
         '''
-        filter out US-101 and I-80 into separate HIghway dataframes
+        filter out US-101 and I-80 into separate HIghway dataframes as same Vehicle IDs exist in both Hughways.
+        Input: 
+            df
+        Ouptut: 
+            df
         '''
 
         filtered_U = df[((df['Location'] == 'us-101'))]
@@ -71,8 +74,10 @@ class Transformation():
     def classVehicleSets(self, df):
         '''
         Create the set for the vehicle classes, Motorcycle, Car and Heavy Vehicle
-        Input:Dataframe
-        output: Vehicle ID set in sequence: 1. Motorcycle , 2. Car, 3. Heavy Vehicle
+        Input: 
+            df
+        Output:
+            Vehicle ID set in sequence: 1. Motorcycle , 2. Car, 3. Heavy Vehicle
         '''
 
         filtered_vClass = df[['Vehicle_ID', 'v_Class',
@@ -89,7 +94,10 @@ class Transformation():
     def precedingVehicleClass(self, df, v_Class_M, v_Class_C, v_Class_HV):
         '''
         Find and populate the preceding Vehicle Class Name into Preceding_Vehicle_Class column, and populate the Vehicle_combination as well. 
-        Input: df,the three deciding Class sets of Motorcycle and Heavy Vehicle. 
+        Input: 
+            df,the three deciding Class sets of Motorcycle and Heavy Vehicle. 
+        Ouptut: 
+            df
         '''
         result = []
 
@@ -110,8 +118,10 @@ class Transformation():
     def precedingVehicleLength(self, df):
         '''
         Find and populate the preceding Vehicle Length Name into preceding_vehicle_length column. If there is no Preceding vehicle, it will be populated with 0 in case of Vehicle ID 0
-        Input: df
-        Ouptut: df
+        Input: 
+            df
+        Ouptut: 
+            df
         '''
         vehicle_lengths = df[['Vehicle_ID', 'v_length']]
         # print(f"{vehicle_lengths.duplicated().sum()} duplicate values have been removed")
@@ -127,10 +137,12 @@ class Transformation():
     def frontToFrontBumperDetailsChangedToRearToFrontBumperDetails(self, df):
         '''
         Change the details from the Front to Front Bumper to Rear of Lead to Front Bumper of Subject Vehicle.
-        1. Space Headway
-        2. Time Headway
-        Input: df
-        Ouptut: df
+            1. Space Headway
+            2. Time Headway
+        Input: 
+            df
+        Ouptut: 
+            df
         '''
         df['Rear_to_Front_Space_Headway'] = df['Space_Headway'] - \
             df['preceding_vehicle_length']
@@ -139,9 +151,11 @@ class Transformation():
 
     def mapPreviousVehicleDetails(self, df):
         '''
-        Change the details from the Front to Front Bumper to Rear of Lead to Front Bumper of Subject Vehicle.
-            1. Space Headway
-            2. Time Headway
+        Update Preceding Vehicle Details for the below columns
+            1. Previous Vehicle Acceleration.
+            2. Previous Vehicle Velocity.
+            3. Previous Vehicle Lane Change details
+            4. Populate any missing details for Vehicle ID 0 with either 0 or False. 
         Input: 
             df
         Ouptut: 
@@ -198,66 +212,3 @@ class Transformation():
         df["total_pair_duration"] = df["L-F_Pair"].map(dict_lenght)
         print(df["total_pair_duration"].dtype)
         return df
-
-    def filterRecordsForModel(self, df):
-        '''
-        Map the Pairs for the Preceding and lead vehicle. 
-        Input: 
-            df
-        Ouptut: 
-            df
-        '''
-        total_duration_less_than_minute = df[(
-            df['total_pair_duration'] >= 6)]
-        total_duration_less_than_minute.index
-        both_lane_change = df[(df['previous_car_lane_changes'] == True) & (df['lane_changes'] == True) & (
-            (df['pair_Time_Duration'] <= 5) | (df['pair_Time_Duration'] >= (df['total_pair_duration'] - 5)))]
-        lead_change = df[(df['previous_car_lane_changes'] == True) & (
-            df['lane_changes'] == False) & ((df['pair_Time_Duration'] <= 5))]
-        subject_change = df[(df['previous_car_lane_changes'] == False) & (
-            df['lane_changes'] == True) & (df['pair_Time_Duration'] >= (df['total_pair_duration'] - 5))]
-        total_duration_less_than_minute = df[(
-            df['total_pair_duration'] < 60)]
-        before = df.shape[0]
-        print(df.shape)
-        print(both_lane_change.shape)
-        print(lead_change.shape)
-        print(subject_change.shape)
-        remove = pd.concat([both_lane_change, lead_change,
-                           subject_change, total_duration_less_than_minute])
-
-        df.drop(labels=remove.index, inplace=True)
-        after = df.shape[0]
-        removed_row_count = after - before
-        print(f"{removed_row_count} rows removed for the first and last 5 seconds of the cars that changed lanes")
-        df['Vehicle_ID'].isna().sum()
-
-        return df
-
-
-def mergeFiles(self, df1, df2):
-    '''
-    Map the Pairs for the Preceding and lead vehicle. 
-    Input: 
-        df
-    Ouptut: 
-        df
-    '''
-    df = pd.concat([df1, df2])
-    print(df1.shape[0])
-    print(df2.shape[0])
-    print(df.shape[0])
-    return df
-
-
-def exportFile(self, df, fileName):
-    '''
-    Map the Pairs for the Preceding and lead vehicle. 
-    Input: 
-        df
-    Ouptut: 
-        df
-    '''
-    stringpath = str(p)[0:str(p).rfind('\\')] + '\\data'
-    ngsimfilteredfile = stringpath + '\\' + fileName + '.csv'
-    df.to_csv(ngsimfilteredfile, index=False)
