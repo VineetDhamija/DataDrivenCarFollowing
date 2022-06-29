@@ -4,8 +4,8 @@ from pathlib import Path
 
 
 class FileProcessing():
-    
-    def readInput(self, fileName):
+
+    def read_input(self, file_name):
         '''
         Read the input file into a dataframe. 
         Input: File name for the file present in Data folder. 

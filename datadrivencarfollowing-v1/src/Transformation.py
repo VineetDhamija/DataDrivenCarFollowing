@@ -1,17 +1,21 @@
 import numpy as np
-import pandas as pd
-from pathlib import Path
+#import pandas as pd
+
 
 class Transformation():
+    '''
+    Class for the definition of variables that will perform one or other transformation on the input data.
+    '''
+
     def trial_func(self):
         '''
         Function to verofy that the class works
         '''
-        print(f"transform:Class called")  # duplicate values have been removed")
+        print("transform:Class called")  # duplicate values have been removed")
 
         return True
 
-    def convertFeetToMetre(self, df):
+    def convert_feet_to_metre(self, df):
         '''
         Convert the input variables which exist in Feet to Metres or Feet/Second to Metre/Second and so on. 
         Input: 
@@ -23,10 +27,10 @@ class Transformation():
         df['Space_Headway'] = df['Space_Headway']*0.3048
         df['v_Vel'] = df['v_Vel']*0.3048
         df['v_Acc'] = df['v_Acc']*0.3048
-        
+
         return df
 
-    def dropNotRequiredColumns(self, df):
+    def drop_not_required_columns(self, df):
         '''
         Drop the columns that are not required for our Model.
         Input: 
@@ -38,7 +42,7 @@ class Transformation():
                      'D_Zone', 'O_Zone', 'Following', 'v_Width', 'Total_Frames'])
         return df
 
-    def createColumnPlaceholders(self, df):
+    def create_column_placeholders(self, df):
         '''
         Create PLaceholder for columns that will be generated and populated to use in the Model 
         Input: 
@@ -51,12 +55,14 @@ class Transformation():
         df['Front_To_Rear_Time_Headway'] = np.NaN
         df['Velocity Difference_Following-Preceding'] = np.NaN
         df['Acceleration Difference_Following-Preceding'] = np.NaN
-        df['L-F_Pair'] = df['Preceding'].astype(str) + '-' + df['Vehicle_ID'].astype(str)
-        df["v_Class_Name"] = df["v_Class"].map({1:"Motorcycle", 2: "Car", 3: "Heavy Vehicle"})
-        df['Relative_Time']= df['Global_Time'] - df['Global_Time'].min() + 1
+        df['L-F_Pair'] = df['Preceding'].astype(str) + \
+            '-' + df['Vehicle_ID'].astype(str)
+        df["v_Class_Name"] = df["v_Class"].map(
+            {1: "Motorcycle", 2: "Car", 3: "Heavy Vehicle"})
+        df['Relative_Time'] = df['Global_Time'] - df['Global_Time'].min() + 1
         return df
 
-    def bifurcateHighways(self, df):
+    def bifurcate_highways(self, df):
         '''
         filter out US-101 and I-80 into separate HIghway dataframes as same Vehicle IDs exist in both Hughways.
         Input: 
@@ -71,7 +77,7 @@ class Transformation():
 
         return filtered_U, filtered_I
 
-    def classVehicleSets(self, df):
+    def class_vehicle_sets(self, df):
         '''
         Create the set for the vehicle classes, Motorcycle, Car and Heavy Vehicle
         Input: 
@@ -91,12 +97,12 @@ class Transformation():
 
         return v_Class_M, v_Class_C, v_Class_HV
 
-    def precedingVehicleClass(self, df, v_Class_M, v_Class_C, v_Class_HV):
+    def preceding_vehicle_class(self, df, v_Class_M, v_Class_C, v_Class_HV):
         '''
         Find and populate the preceding Vehicle Class Name into Preceding_Vehicle_Class column, and populate the Vehicle_combination as well. 
         Input: 
             df,the three deciding Class sets of Motorcycle and Heavy Vehicle. 
-        Ouptut: 
+        Ouptut:
             df
         '''
         result = []
@@ -115,7 +121,7 @@ class Transformation():
             '-' + df['v_Class_Name']
         return df
 
-    def precedingVehicleLength(self, df):
+    def preceding_vehicle_length(self, df):
         '''
         Find and populate the preceding Vehicle Length Name into preceding_vehicle_length column. If there is no Preceding vehicle, it will be populated with 0 in case of Vehicle ID 0
         Input: 
@@ -128,13 +134,13 @@ class Transformation():
         vehicle_lengths.drop_duplicates(inplace=True)
         # print(vehicle_lengths.shape)
         x = vehicle_lengths.groupby(['Vehicle_ID']).mean()
-        dict = x.to_dict()['v_length']
-        df["preceding_vehicle_length"] = df["Preceding"].map(dict)
+        dict_var = x.to_dict()['v_length']
+        df["preceding_vehicle_length"] = df["Preceding"].map(dict_var)
         df["preceding_vehicle_length"] = df["preceding_vehicle_length"].fillna(
             0)
         return df
 
-    def frontToFrontBumperDetailsChangedToRearToFrontBumperDetails(self, df):
+    def front_to_front_bumper_details_changed_to_rear_to_front_bumper_details(self, df):
         '''
         Change the details from the Front to Front Bumper to Rear of Lead to Front Bumper of Subject Vehicle.
             1. Space Headway
@@ -147,9 +153,11 @@ class Transformation():
         df['Rear_to_Front_Space_Headway'] = df['Space_Headway'] - \
             df['preceding_vehicle_length']
         df['Front_To_Rear_Time_Headway'] = df['Rear_to_Front_Space_Headway'] / df['v_Vel']
+        df["Front_To_Rear_Time_Headway"] = df["Front_To_Rear_Time_Headway"].replace(
+            np.nan, 9999)
         return df
 
-    def mapPreviousVehicleDetails(self, df):
+    def map_previous_vehicle_details(self, df):
         '''
         Update Preceding Vehicle Details for the below columns
             1. Previous Vehicle Acceleration.
@@ -190,7 +198,7 @@ class Transformation():
             False)
         return df
 
-    def mapPairs(self, df):
+    def map_pairs(self, df):
         '''
         Map the Pairs for the Preceding and lead vehicle. 
         Input: 
@@ -207,7 +215,7 @@ class Transformation():
         df['pair_Time_Duration'] = (df.groupby(
             ['L-F_Pair'], as_index=False).cumcount()*0.1)
         x = (df[['L-F_Pair', 'pair_Time_Duration']].groupby(['L-F_Pair'],
-                                                            as_index=False).max(['pair_Time_Duration']))
+             as_index=False).max(['pair_Time_Duration']))
         dict_lenght = dict(zip(x['L-F_Pair'], x['pair_Time_Duration']))
         df["total_pair_duration"] = df["L-F_Pair"].map(dict_lenght)
         print(df["total_pair_duration"].dtype)

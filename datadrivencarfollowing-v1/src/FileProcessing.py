@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 from pathlib import Path
 
@@ -10,7 +9,7 @@ class FileProcessing():
 #    def __init__(self):
 #        self.initialize()
 
-    def readInput(self, fileName):
+    def read_input(self, file_name):
         '''
         Read the input file into a dataframe. 
         Input: File name for the file present in Data folder. 
@@ -18,11 +17,11 @@ class FileProcessing():
         '''
         print(f"original File path: {self.p}")
         print(f"Data File path: { self.stringpath}")
-        ngsimfile = self.stringpath + '/' + fileName + '.csv'
+        ngsimfile = self.stringpath + '/' + file_name + '.csv'
         df = pd.read_csv(ngsimfile, low_memory=False)
         return df
 
-    def exportFile(self, df, fileName):
+    def export_file(self, df, file_name):
         '''
         Export the working Data frame into csv file of the mentioned name.  
         Input: 
@@ -31,11 +30,11 @@ class FileProcessing():
             df
         '''
 
-        ngsimfilteredfile = self.stringpath + '\\' + fileName + '.csv'
+        ngsimfilteredfile = self.stringpath + '\\' + file_name + '.csv'
         df.to_csv(ngsimfilteredfile, index=False)
         return True
 
-    def mergeFiles(self, df1, df2):
+    def merge_files(self, df1, df2):
         '''
         Merge the I-80 and US-101 Highway dataframe.  
         Input: 

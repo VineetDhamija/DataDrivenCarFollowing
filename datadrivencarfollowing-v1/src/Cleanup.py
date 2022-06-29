@@ -13,7 +13,7 @@ class Cleanup():
         print(f"Class called")  # duplicate values have been removed")
         return True
 
-    def removeDups(self, df):
+    def remove_dups(self, df):
         '''
         Remove Duplicates.
         Input: 
@@ -25,7 +25,7 @@ class Cleanup():
         df.drop_duplicates(inplace=True)
         return df
 
-    def filterRecordsForModel(self, df):
+    def filter_records_for_model(self, df):
         '''
         Map the Pairs for the Preceding and lead vehicle. 
         Input: 

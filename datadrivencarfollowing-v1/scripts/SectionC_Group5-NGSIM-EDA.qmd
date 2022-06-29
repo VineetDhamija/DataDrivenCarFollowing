@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import warnings
 warnings.filterwarnings("ignore")
-def sniff(df):
+def sniff(df ):
     with pd.option_context("display.max_colwidth", 20):
         info = pd.DataFrame()
         info['data type'] = df.dtypes
