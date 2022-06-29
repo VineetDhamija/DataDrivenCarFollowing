@@ -21,14 +21,14 @@ class model():
         pairs = random.sample(pairs, v)
         return pairs
 
-    def data_in_parts(df, rangefrom, rangeto):
-        a = df['LF_pairs'].unique()
+    def data_in_parts(self,df, rangefrom, rangeto):
+        a = df['L-F_Pair'].unique()
         b = a.tolist()
         b = b[rangefrom:rangeto]
         c = len(a)/30
         return c, b
 
-    def fitmodel(train, test):
+    def fitmodel(self,train, test):
         X_train = train[["Rear_to_Front_Space_Headway", 'Vehicle_combination_cat',
                          'Local_Y', 'Velocity Difference_Following-Preceding', 'v_Vel']]
         y_train = train['nextframeAcc']
@@ -39,7 +39,7 @@ class model():
         rf.fit(X_train, y_train)
         return rf
 
-    def prediction(test, b, target_variable, rf):
+    def prediction(self,test, b, target_variable, rf):
         F_df = []
         r = []
         Q = pd.DataFrame()
