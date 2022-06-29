@@ -12,7 +12,7 @@ from sklearn.metrics import r2_score, mean_absolute_error,mean_squared_error
 
 class model():
 
-    def createTrainPairs(self, df):
+    def createTrainPairs_andsplitdata(df):
         '''
         Read the input file into a dataframe. 
         Input: File name for the file present in Data folder. 
@@ -24,6 +24,13 @@ class model():
         v = round(len(pairs)*0.7)   
         pairs = random.sample(pairs, v)
         return pairs
+
+    def splitdata(my_pairs,df):
+        #converting the total dataset to 70/30% pair for train and test. 
+        train = df[df['L-F_Pair'].isin(my_pairs)]
+
+        test = df[~df['L-F_Pair'].isin(my_pairs)]
+        return train, test
 
     
     def data_in_parts(df,rangefrom,rangeto):

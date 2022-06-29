@@ -9,4 +9,5 @@ def reactiontime(i,df):
         df["nextframeAcc"]=df.groupby(["L-F_Pair"],as_index=False)["v_Acc"].shift(-i)
         df["nextframesvel"]=df.groupby(["L-F_Pair"],as_index=False)["v_Vel"].shift(-i)
         df["nextframeposition"]=df.groupby(["L-F_Pair"],as_index=False)["Local_Y"].shift(-i)
+        df = df[df["nextframeAcc"].notna()]
     return df
