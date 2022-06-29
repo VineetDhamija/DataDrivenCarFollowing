@@ -12,11 +12,9 @@ from sklearn.metrics import r2_score, mean_absolute_error,mean_squared_error
 
 class model():
 
-    def createTrainPairs_andsplitdata(df):
+    def CreateTrainPairsAndSplitData(df):
         '''
-        Read the input file into a dataframe. 
-        Input: File name for the file present in Data folder. 
-        Output: Dataframe name. 
+        dhdh
         '''
         random.seed(2109)
         pairs = df["L-F_Pair"].unique()
@@ -25,10 +23,9 @@ class model():
         pairs = random.sample(pairs, v)
         return pairs
 
-    def splitdata(my_pairs,df):
+    def Splidata(my_pairs,df):
         #converting the total dataset to 70/30% pair for train and test. 
         train = df[df['L-F_Pair'].isin(my_pairs)]
-
         test = df[~df['L-F_Pair'].isin(my_pairs)]
         return train, test
 
@@ -40,14 +37,15 @@ class model():
         c= len(a)/30
         return c,b 
 
-    def fitmodel(train,test):
+    def fitmodel(i,train,test):
         X_train = train[["Rear_to_Front_Space_Headway",'Vehicle_combination_cat','Local_Y','Velocity Difference_Following-Preceding','v_Vel']]
         y_train= train['nextframeAcc']
         X_test = test[["Rear_to_Front_Space_Headway",'Vehicle_combination_cat','Local_Y','Velocity Difference_Following-Preceding','v_Vel']]
         y_test= test['nextframeAcc']
-        rf = RandomForestRegressor(n_estimators = 150,n_jobs=-1)
-        rf.fit(X_train,y_train)
-        return rf
+        for i in range(0,1000):
+            rf = RandomForestRegressor(n_estimators = i,n_jobs=-1)
+            rf.fit(X_train,y_train)
+            return rf
 
     def prediction(test,b,target_variable,rf):
         F_df = []
