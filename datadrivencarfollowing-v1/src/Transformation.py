@@ -154,7 +154,9 @@ class Transformation():
             df['preceding_vehicle_length']
         df['Front_To_Rear_Time_Headway'] = df['Rear_to_Front_Space_Headway'] / df['v_Vel']
         df["Front_To_Rear_Time_Headway"] = df["Front_To_Rear_Time_Headway"].replace(
-            np.nan, 9999)
+            np.NaN, 9999)
+        df["Front_To_Rear_Time_Headway"] = df["Front_To_Rear_Time_Headway"].replace(
+            np.inf, 9999)
         return df
 
     def map_previous_vehicle_details(self, df):
