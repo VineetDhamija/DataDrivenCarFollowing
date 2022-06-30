@@ -8,6 +8,15 @@ from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 
 class model():
 
+    def reactiontime(i, df):
+        df["nextframeAcc"] = df.groupby(
+            ["LF_pairs"], as_index=False)["sacc"].shift(-i)
+        df["nextframesvel"] = df.groupby(
+            ["LF_pairs"], as_index=False)["svel"].shift(-i)
+        df["nextframeposition"] = df.groupby(
+            ["LF_pairs"], as_index=False)["Local.Y"].shift(-i)
+        return df
+
     def createTrainPairs(self, df):
         '''
         Read the input file into a dataframe. 
