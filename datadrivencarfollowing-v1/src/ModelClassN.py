@@ -210,4 +210,4 @@ class ModelClass():
     def accuracy(self, F):
         mae_score = mean_absolute_error(F['V_Acc'], F['predicted_acceleration'])
         r2_scores = r2_score(F['V_Acc'], F['predicted_velocity'])
-        return mae_score, r2_score
+        return mae_score, r2_scores
