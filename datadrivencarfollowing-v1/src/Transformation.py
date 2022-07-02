@@ -27,6 +27,8 @@ class Transformation():
         df['Space_Headway'] = df['Space_Headway']*0.3048
         df['v_Vel'] = df['v_Vel']*0.3048
         df['v_Acc'] = df['v_Acc']*0.3048
+        df['Local_X'] = df['Local_X']*0.3048
+        df['Local_Y'] = df['Local_Y']*0.3048
 
         return df
 
@@ -39,7 +41,7 @@ class Transformation():
             df
         '''
         df = df.drop(columns=['Movement', 'Direction', 'Section_ID', 'Int_ID',
-                     'D_Zone', 'O_Zone', 'Following', 'v_Width', 'Total_Frames'])
+                     'D_Zone', 'O_Zone', 'Following', 'v_Width', 'Total_Frames', 'Global_X', 'Global_Y'])
         return df
 
     def create_column_placeholders(self, df):
@@ -185,17 +187,19 @@ class Transformation():
             f"{df['Location']}::{df[(df['lane_changes'] == False) ]['Vehicle_ID'].unique().size} cars dont change lanes")
         print(
             f"{df['Location']}::{df[(df['lane_changes'] == True) ]['Vehicle_ID'].unique().size} cars Change lanes")
-        right_df = df[['Preceding', 'Relative_Time',
-                       'v_Vel', 'v_Acc', 'lane_changes']]
-        right_df.rename(columns={'Preceding': 'Prec_Vehicle_ID', 'v_Vel': 'previous_Vehicle_Velocity',
-                        'v_Acc': 'previous_Vehicle_Acceleration', "lane_changes": "previous_car_lane_changes"}, inplace=True)
-        df['Prec_Vehicle_ID'] = df['Vehicle_ID']
+        right_df = df[['Vehicle_ID', 'Relative_Time',
+                       'v_Vel', 'v_Acc', 'lane_changes', 'Local_Y']]
+        right_df.rename(columns={'Vehicle_ID': 'Prec_Vehicle_ID', 'v_Vel': 'previous_Vehicle_Velocity',
+                        'v_Acc': 'previous_Vehicle_Acceleration', "lane_changes": "previous_car_lane_changes", "Local_Y": "previous_Local_Y"}, inplace=True)
+        df['Prec_Vehicle_ID'] = df['Preceding']
         df = df.merge(right=right_df, how='left', on=(
             'Prec_Vehicle_ID', 'Relative_Time'))
         df['previous_Vehicle_Velocity'] = df['previous_Vehicle_Velocity'].fillna(
             0)
         df['previous_Vehicle_Acceleration'] = df['previous_Vehicle_Acceleration'].fillna(
             0)
+        df['previous_Local_Y'] = df['previous_Local_Y'].fillna(9999)
+
         df['previous_car_lane_changes'] = df['previous_car_lane_changes'].fillna(
             False)
         return df
