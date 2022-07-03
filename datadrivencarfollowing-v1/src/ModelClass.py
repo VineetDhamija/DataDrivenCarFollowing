@@ -41,6 +41,7 @@ class ModelClass():
         predict_on_pair = self.prediction_test_pairs(test_df, 10, 12)
         predict_on_pair[0]
         target_variable = 'nextframeAcc'
+
         predicted_data = self.prediction(
             test_df, predict_on_pair, target_variable, model, time_frame)
         prediction_1 = predicted_data[predicted_data["L-F_Pair"]
@@ -50,17 +51,20 @@ class ModelClass():
                              'predicted_acceleration', 'nextframeAcc', 'Acceleration', time_frame)
         self.plot_prediction(prediction_1, 'pair_Time_Duration',
                              'predicted_velocity', 'v_Vel', 'Velocity', time_frame)
+        self.plot_prediction(prediction_1, 'pair_Time_Duration',
+                             'predicted_spacing', 'Rear_to_Front_Space_Headway', 'Spacing', time_frame)
 
         return df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test, predicted_data, model
 
-    def plot_prediction(self, df, x, predicted_y, actual_y, name, time_frame):
+    def plot_prediction(self, df, col_x, predicted_y, actual_y, name, time_frame):
         plt.figure(figsize=(11, 9))
-        ax = sns.lineplot(x=df["x"], y=df["actual_y"],
-                          color="r", label="Actual {name} Value")
-        sns.lineplot(x=df["x"], y=df["predicted_y"],
-                     color="b", label="Predicted {name} Values")
-        plt.title(
-            '{name} : Actual vs Fitted Values for Reaction Time: {time_frame}')
+        label1 = "Actual" + str(name) + "Value"
+        label2 = "Predicted" + str(name) + "Value"
+        title_value = str(name) + \
+            " : Actual vs Fitted Values for Reaction Time: " + str(time_frame)
+        ax = sns.lineplot(x=df[col_x], y=df[actual_y], color="r", label=label1)
+        sns.lineplot(x=df[col_x], y=df[predicted_y], color="b", label=label2)
+        plt.title(title_value)
         plt.show()
         plt.close()
         return None
@@ -229,7 +233,8 @@ class ModelClass():
     'Location_cat']]
     predicted_data = prediction(test_df, predict_on_pair, target_variable, model,0.1)
     '''
-    def prediction(test_df, test_range, target_variable, model, time_frame):
+
+    def prediction(self, test_df, test_range, target_variable, model, time_frame):
         predicted_df = []
         # this loop runs for each pair required predictions.
         for current_pair in test_range:
@@ -276,16 +281,21 @@ class ModelClass():
                 s_subject = ((vel[j-1]*time_frame) +
                              (0.5*pred_acc[j-1]*pow(time_frame, 2)))
 
-                #s_lead= ((input_df.iloc[j-1]['preceding_Vehicle_Velocity']*time_frame) + (0.5*input_df.iloc[j-1]['preceding_Vehicle_Acceleration']*pow(time_frame,2)))
+                s_preceding = ((input_df.iloc[j-1]['preceding_Vehicle_Velocity']*time_frame) + (
+                    0.5*input_df.iloc[j-1]['preceding_Vehicle_Acceleration']*pow(time_frame, 2)))
+                spacing[j] = spacing[j-1] + s_preceding - s_subject
 
-                local_y_subject[j] = local_y_subject[j-1] + s_subject
+                #local_y_subject[j] = local_y_subject[j-1] + s_subject
                 #spacing[j] = spacing[j-1]+ s_lead- s_subject
-                local_y_preceding[j] = input_df.iloc[j-1]['preceding_Local_Y']
-                spacing[j] = local_y_preceding[j] - local_y_subject[j] - \
-                    input_df.iloc[j-1]['preceding_Local_Y'] - \
-                    length_preceding_vehicle
+                #local_y_preceding[j] = input_df.iloc[j-1]['preceding_Local_Y']
+                # spacing[j] = local_y_preceding[j] - local_y_subject[j] - \
+                #    input_df.iloc[j-1]['preceding_Local_Y'] - \
+                #    length_preceding_vehicle
+                #print(f"s_subject: {s_subject},local_y_subject:{local_y_subject[j]},local_y_preceding: {local_y_preceding[j]},spacing[j]:{spacing[j]}")
+
                 print(
-                    f"s_subject: {s_subject},local_y_subject:{local_y_subject[j]},local_y_preceding: {local_y_preceding[j]},spacing[j]:{spacing[j]}")
+                    f"s_subject: {s_subject},s_preceding:{s_preceding},previous spacing: {spacing[j-1]},spacing[j]:{spacing[j]}")
+
                 # as we are predicting the next values, we should not predict for the last one.
                 if j == len(input_df)-1:
                     break
@@ -307,6 +317,7 @@ class ModelClass():
             print(f"pred_acc shape: {pred_acc.shape}")
             input_df['predicted_acceleration'] = pred_acc
             input_df['predicted_velocity'] = vel
+            input_df['predicted_spacing'] = spacing
 
             predicted_df.append(input_df)
             result = pd.concat(predicted_df)

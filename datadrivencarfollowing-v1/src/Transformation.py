@@ -41,7 +41,7 @@ class Transformation():
             df
         '''
         df = df.drop(columns=['Movement', 'Direction', 'Section_ID', 'Int_ID',
-                     'D_Zone', 'O_Zone', 'Following', 'v_Width', 'Total_Frames', 'Global_X', 'Global_Y'])
+                     'D_Zone', 'O_Zone', 'v_Width', 'Total_Frames', 'Global_X', 'Global_Y'])
         return df
 
     def create_column_placeholders(self, df):
@@ -184,9 +184,9 @@ class Transformation():
         df['lane_changes'] = df['Vehicle_ID'].isin(
             lane_change_vehicles)
         print(
-            f"{df['Location']}::{df[(df['lane_changes'] == False) ]['Vehicle_ID'].unique().size} cars dont change lanes")
+            f"{df['Location'].iloc[0]}::{df[(df['lane_changes'] == False) ]['Vehicle_ID'].unique().size} cars dont change lanes")
         print(
-            f"{df['Location']}::{df[(df['lane_changes'] == True) ]['Vehicle_ID'].unique().size} cars Change lanes")
+            f"{df['Location'].iloc[0]}::{df[(df['lane_changes'] == True) ]['Vehicle_ID'].unique().size} cars Change lanes")
         right_df = df[['Vehicle_ID', 'Global_Time',
                        'v_Vel', 'v_Acc', 'lane_changes', 'Local_Y', 'v_Class']]
         right_df.rename(columns={'Vehicle_ID': 'Prec_Vehicle_ID', 'v_Vel': 'preceding_Vehicle_Velocity',
@@ -203,6 +203,11 @@ class Transformation():
         df['preceding_car_lane_changes'] = df['preceding_car_lane_changes'].fillna(
             False)
         df['preceding_v_Class'] = df['preceding_v_Class'].fillna(0)
+        df['Velocity Difference_Following-Preceding'] = df['v_Vel'] - \
+            df['preceding_Vehicle_Velocity']
+        df['Acceleration Difference_Following-Preceding'] = df['v_Acc'] - \
+            df['preceding_Vehicle_Acceleration']
+
         return df
 
     def map_pairs(self, df):
@@ -213,10 +218,6 @@ class Transformation():
         Ouptut: 
             df
         '''
-        df['Velocity Difference_Following-Preceding'] = df['v_Vel'] - \
-            df['preceding_Vehicle_Velocity']
-        df['Acceleration Difference_Following-Preceding'] = df['v_Acc'] - \
-            df['preceding_Vehicle_Acceleration']
         df = df.sort_values(by=['Global_Time'],
                             ascending=True, ignore_index=True)
         df['pair_Time_Duration'] = (df.groupby(
