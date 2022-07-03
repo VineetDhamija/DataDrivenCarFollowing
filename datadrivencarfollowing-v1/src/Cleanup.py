@@ -42,39 +42,35 @@ class Cleanup():
         bad_v_Class_length = df[(
             df['Vehicle_ID'].isin(remove_bad_data_vehicles))]
 
-        total_duration_less_than_minute = df[(
-            df['total_pair_duration'] >= 6)]
-        total_duration_less_than_minute.index
+        # total_duration_less_than_minute = df[(
+        #    df['total_pair_duration'] >= 6)]
+        # total_duration_less_than_minute.index
         '''
-        both_lane_change = df[(df['previous_car_lane_changes'] == True) & (df['lane_changes'] == True) & (
+        both_lane_change = df[(df['preceding_car_lane_changes'] == True) & (df['lane_changes'] == True) & (
             (df['pair_Time_Duration'] <= 5) | (df['pair_Time_Duration'] >= (df['total_pair_duration'] - 5)))]
-        lead_change = df[(df['previous_car_lane_changes'] == True) & (
+        lead_change = df[(df['preceding_car_lane_changes'] == True) & (
             df['lane_changes'] == False) & ((df['pair_Time_Duration'] <= 5))]
-        subject_change = df[(df['previous_car_lane_changes'] == False) & (
+        subject_change = df[(df['preceding_car_lane_changes'] == False) & (
             df['lane_changes'] == True) & (df['pair_Time_Duration'] >= (df['total_pair_duration'] - 5))]
         total_duration_less_than_minute = df[(
             df['total_pair_duration'] < 60)]
         '''
 
-        both_lane_change = df[(df['previous_car_lane_changes'] == True) & (
-            df['lane_changes'] == True)]
-        lead_change = df[(df['previous_car_lane_changes'] == True) & (
-            df['lane_changes'] == False)]
-        subject_change = df[(df['previous_car_lane_changes'] == False) & (
-            df['lane_changes'] == True)]
         total_duration_less_than_minute = df[(
             df['total_pair_duration'] < 30)]
 
         before = df.shape[0]
         print(f"dataset before Row Removal{df.shape}")
+        '''
         print(f"{both_lane_change.shape} Lead and Subject both change lane, so first and last 5 seconds of trajectory removed")
         print(f"{lead_change.shape} Lead Vehicle changes Lane, so first 5 seconds of car following Removed. ")
-        print(
-            f"{bad_v_Class_length} have multiple lengths and classes for same Vehicle ID")
+        print(f"{bad_v_Class_length.shape} have multiple lengths and classes for same Vehicle ID")
         print(f"{subject_change.shape} subject vehicles change lanes so last 5 seconds of vehicle trajectory removed")
-        remove = pd.concat([both_lane_change, lead_change,
-                            subject_change, total_duration_less_than_minute, bad_v_Class_length])
-
+        '''
+        # remove = pd.concat([both_lane_change, lead_change,
+        #                    subject_change, total_duration_less_than_minute, bad_v_Class_length])
+        remove = pd.concat(
+            [total_duration_less_than_minute, bad_v_Class_length])
         df.drop(labels=remove.index, inplace=True)
         after = df.shape[0]
         removed_row_count = before - after

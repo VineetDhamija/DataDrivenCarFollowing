@@ -61,7 +61,7 @@ class Transformation():
             '-' + df['Vehicle_ID'].astype(str)
         df["v_Class_Name"] = df["v_Class"].map(
             {1: "Motorcycle", 2: "Car", 3: "Heavy Vehicle"})
-        df['Relative_Time'] = df['Global_Time'] - df['Global_Time'].min() + 1
+        #df['Relative_Time'] = df['Global_Time'] - df['Global_Time'].min() + 1
         return df
 
     def bifurcate_highways(self, df):
@@ -161,7 +161,7 @@ class Transformation():
             np.inf, 9999)
         return df
 
-    def map_previous_vehicle_details(self, df):
+    def map_preceding_vehicle_details(self, df):
         '''
         Update Preceding Vehicle Details for the below columns
             1. Previous Vehicle Acceleration.
@@ -187,21 +187,22 @@ class Transformation():
             f"{df['Location']}::{df[(df['lane_changes'] == False) ]['Vehicle_ID'].unique().size} cars dont change lanes")
         print(
             f"{df['Location']}::{df[(df['lane_changes'] == True) ]['Vehicle_ID'].unique().size} cars Change lanes")
-        right_df = df[['Vehicle_ID', 'Relative_Time',
-                       'v_Vel', 'v_Acc', 'lane_changes', 'Local_Y']]
-        right_df.rename(columns={'Vehicle_ID': 'Prec_Vehicle_ID', 'v_Vel': 'previous_Vehicle_Velocity',
-                        'v_Acc': 'previous_Vehicle_Acceleration', "lane_changes": "previous_car_lane_changes", "Local_Y": "previous_Local_Y"}, inplace=True)
+        right_df = df[['Vehicle_ID', 'Global_Time',
+                       'v_Vel', 'v_Acc', 'lane_changes', 'Local_Y', 'v_Class']]
+        right_df.rename(columns={'Vehicle_ID': 'Prec_Vehicle_ID', 'v_Vel': 'preceding_Vehicle_Velocity',
+                        'v_Acc': 'preceding_Vehicle_Acceleration', "lane_changes": "preceding_car_lane_changes", "Local_Y": "preceding_Local_Y", "v_Class": "preceding_v_Class"}, inplace=True)
         df['Prec_Vehicle_ID'] = df['Preceding']
         df = df.merge(right=right_df, how='left', on=(
-            'Prec_Vehicle_ID', 'Relative_Time'))
-        df['previous_Vehicle_Velocity'] = df['previous_Vehicle_Velocity'].fillna(
+            'Prec_Vehicle_ID', 'Global_Time'))
+        df['preceding_Vehicle_Velocity'] = df['preceding_Vehicle_Velocity'].fillna(
             0)
-        df['previous_Vehicle_Acceleration'] = df['previous_Vehicle_Acceleration'].fillna(
+        df['preceding_Vehicle_Acceleration'] = df['preceding_Vehicle_Acceleration'].fillna(
             0)
-        df['previous_Local_Y'] = df['previous_Local_Y'].fillna(9999)
+        df['preceding_Local_Y'] = df['preceding_Local_Y'].fillna(9999)
 
-        df['previous_car_lane_changes'] = df['previous_car_lane_changes'].fillna(
+        df['preceding_car_lane_changes'] = df['preceding_car_lane_changes'].fillna(
             False)
+        df['preceding_v_Class'] = df['preceding_v_Class'].fillna(0)
         return df
 
     def map_pairs(self, df):
@@ -213,10 +214,10 @@ class Transformation():
             df
         '''
         df['Velocity Difference_Following-Preceding'] = df['v_Vel'] - \
-            df['previous_Vehicle_Velocity']
+            df['preceding_Vehicle_Velocity']
         df['Acceleration Difference_Following-Preceding'] = df['v_Acc'] - \
-            df['previous_Vehicle_Acceleration']
-        df = df.sort_values(by=['Relative_Time'],
+            df['preceding_Vehicle_Acceleration']
+        df = df.sort_values(by=['Global_Time'],
                             ascending=True, ignore_index=True)
         df['pair_Time_Duration'] = (df.groupby(
             ['L-F_Pair'], as_index=False).cumcount()*0.1)
@@ -224,5 +225,5 @@ class Transformation():
              as_index=False).max(['pair_Time_Duration']))
         dict_lenght = dict(zip(x['L-F_Pair'], x['pair_Time_Duration']))
         df["total_pair_duration"] = df["L-F_Pair"].map(dict_lenght)
-        print(df["total_pair_duration"].dtype)
+        # print(df["total_pair_duration"].dtype)
         return df
