@@ -17,23 +17,6 @@ class ModelClass():
     '''
     '''
 
-    def fit_neural_network(input):
-
-        input = keras.Input
-        # Fully connected layers
-        x = layers.Dense(128, activation='relu')(input)
-        x = layers.Dense(64, activation='relu')(x)
-        x = layers.Dense(16, activation='relu')(x)
-        # Softmax used for classifier problems
-        outputs = layers.Dense(1, activation="softmax")(x)
-
-        model = keras.Model(inputs=input, outputs=outputs)
-        model.compile(optimizer='rmsprop',
-                      loss='mean_squared_error',
-                      metrics=['mean_squared_error'])
-        model.summary()
-        return model
-
     def create_prediction_pair(self, df, n):
         '''
         create the prediction pair by shifting the actual data up by the mentioned number(0.1*n seconds) to create the timeseries info
@@ -91,57 +74,61 @@ class ModelClass():
         return rf, X_train, y_train, X_test, y_test
 
     def predict_random_forest_model(test, unique_pairs_df, target_variable, rf):
-
         '''
         predicton using randome forest model using loops
         '''
         predicted_df = []
-         ### r = [] Not used
+        # r = [] Not used
         input_df = pd.DataFrame()
-        
+
         for i in unique_pairs_df:
 
         '''
         unique_pairs_df is the test range
         '''
-            # input_df this is the input data frame
-            input_df = test_df[test_df['L-F_Pair'] == i]
+        # input_df this is the input data frame
+        input_df = test_df[test_df['L-F_Pair'] == i]
 
-            velocity_of_subject_vehicle = np.zeros(input_df.shape[0])
-            Vehicle_combination = np.zeros(input_df.shape[0])
-            Local_Y_of_subject_vehicle = np.zeros(input_df.shape[0])
-            rear_to_front_spacing = np.zeros(input_df.shape[0])
-            differnce_of_preciding_and_following_velocity = np.zeros(input_df.shape[0])
+        velocity_of_subject_vehicle = np.zeros(input_df.shape[0])
+        Vehicle_combination = np.zeros(input_df.shape[0])
+        Local_Y_of_subject_vehicle = np.zeros(input_df.shape[0])
+        rear_to_front_spacing = np.zeros(input_df.shape[0])
+        differnce_of_preciding_and_following_velocity = np.zeros(
+            input_df.shape[0])
 
-            predicted_acceleration = np.zeros(input_df.shape[0])
+        predicted_acceleration = np.zeros(input_df.shape[0])
 
-            # adding first value of the vehicle
-            velocity_of_subject_vehicle[0] = input_df.iloc[0]['v_Vel']
-            rear_to_front_spacing[0] = input_df.iloc[0]['Rear_to_Front_Space_Headway']
-            Vehicle_combination[0] = input_df.iloc[0]['Vehicle_combination_cat']
-            Local_Y_of_subject_vehicle[0] = input_df.iloc[0]['Local_Y']
-            differnce_of_preciding_and_following_velocity[0] = input_df.iloc[0]['Velocity Difference_Following-Preceding']
+        # adding first value of the vehicle
+        velocity_of_subject_vehicle[0] = input_df.iloc[0]['v_Vel']
+        rear_to_front_spacing[0] = input_df.iloc[0]['Rear_to_Front_Space_Headway']
+        Vehicle_combination[0] = input_df.iloc[0]['Vehicle_combination_cat']
+        Local_Y_of_subject_vehicle[0] = input_df.iloc[0]['Local_Y']
+        differnce_of_preciding_and_following_velocity[0] = input_df.iloc[
+            0]['Velocity Difference_Following-Preceding']
 
-            predicted_acceleration[0] = input_df.iloc[1][target_variable]
+        predicted_acceleration[0] = input_df.iloc[1][target_variable]
 
         #       #predicting first value of acceleration
-            # check here
-            predicted_acceleration[1] = rf.predict(np.array(
-                [velocity_of_subject_vehicle[0], Vehicle_combination[0], Local_Y_of_subject_vehicle[0], differnce_of_preciding_and_following_velocity[0], rear_to_front_spacing[0]]).reshape(1, -1))
+        # check here
+        predicted_acceleration[1] = rf.predict(np.array(
+            [velocity_of_subject_vehicle[0], Vehicle_combination[0], Local_Y_of_subject_vehicle[0], differnce_of_preciding_and_following_velocity[0], rear_to_front_spacing[0]]).reshape(1, -1))
 
         #     #calculating speed from the predicted acceleration.
-            # check here
+        # check here
 
-            for j in range(2, len(input_df)):
+        for j in range(2, len(input_df)):
 
-                velocity_of_subject_vehicle[j] = velocity_of_subject_vehicle[j-1]+(predicted_acceleration[j]*0.1)
-                differnce_of_preciding_and_following_velocity[j] = velocity_of_subject_vehicle[j] - input_df.iloc[j]['previous_Vehicle_Velocity']
-                # rear_to_front_spacing[j] = rear_to_front_spacing[j-1]+((velocity_of_subject_vehicle[j-1]*0.1)+ (0.5*predicted_acceleration[j]*pow(0.1,2)))
-                rear_to_front_spacing[j] = (velocity_of_subject_vehicle[j-1]*0.1) + (0.5*predicted_acceleration[j]*pow(0.1, 2))
-                Local_Y_of_subject_vehicle[j] = Local_Y_of_subject_vehicle[j-1]
-                Vehicle_combination[j] = Vehicle_combination[j-1]
+            velocity_of_subject_vehicle[j] = velocity_of_subject_vehicle[j-1]+(
+                predicted_acceleration[j]*0.1)
+            differnce_of_preciding_and_following_velocity[j] = velocity_of_subject_vehicle[j] - \
+            input_df.iloc[j]['previous_Vehicle_Velocity']
+            # rear_to_front_spacing[j] = rear_to_front_spacing[j-1]+((velocity_of_subject_vehicle[j-1]*0.1)+ (0.5*predicted_acceleration[j]*pow(0.1,2)))
+            rear_to_front_spacing[j] = (
+                 velocity_of_subject_vehicle[j-1]*0.1) + (0.5*predicted_acceleration[j]*pow(0.1, 2))
+             Local_Y_of_subject_vehicle[j] = Local_Y_of_subject_vehicle[j-1]
+              Vehicle_combination[j] = Vehicle_combination[j-1]
 
-                if j == len(input_df)-1:
+               if j == len(input_df)-1:
                     break
                 predicted_acceleration[j+1] = rf.predict(np.array(
                     [Vehicle_combination[j], Local_Y_of_subject_vehicle[j], velocity_of_subject_vehicle[j], differnce_of_preciding_and_following_velocity[j], rear_to_front_spacing[j]]).reshape(1, -1))
@@ -155,7 +142,7 @@ class ModelClass():
 
     def predict_cnn(test, unique_pairs_df, target_variable, rf):
         predicted_df = []
-        #### r = []   Not used
+        # r = []   Not used
         input_df = pd.DataFrame()
         # unique_pairs_df is the test range
         for i in unique_pairs_df:
@@ -165,7 +152,8 @@ class ModelClass():
             Vehicle_combination = np.zeros(input_df.shape[0])
             Local_Y_of_subject_vehicle = np.zeros(input_df.shape[0])
             rear_to_front_spacing = np.zeros(input_df.shape[0])
-            differnce_of_preciding_and_following_velocity = np.zeros(input_df.shape[0])
+            differnce_of_preciding_and_following_velocity = np.zeros(
+                input_df.shape[0])
 
             predicted_acceleration = np.zeros(input_df.shape[0])
 
@@ -174,7 +162,8 @@ class ModelClass():
             rear_to_front_spacing[0] = input_df.iloc[0]['Rear_to_Front_Space_Headway']
             Vehicle_combination[0] = input_df.iloc[0]['Vehicle_combination_cat']
             Local_Y_of_subject_vehicle[0] = input_df.iloc[0]['Local_Y']
-            differnce_of_preciding_and_following_velocity[0] = input_df.iloc[0]['Velocity Difference_Following-Preceding']
+            differnce_of_preciding_and_following_velocity[0] = input_df.iloc[
+                0]['Velocity Difference_Following-Preceding']
 
             predicted_acceleration[0] = input_df.iloc[1][target_variable]
 
@@ -188,10 +177,13 @@ class ModelClass():
 
             for j in range(2, len(input_df)):
 
-                velocity_of_subject_vehicle[j] = velocity_of_subject_vehicle[j-1]+(predicted_acceleration[j]*0.1)
-                differnce_of_preciding_and_following_velocity[j] = velocity_of_subject_vehicle[j] - input_df.iloc[j]['previous_Vehicle_Velocity']
+                velocity_of_subject_vehicle[j] = velocity_of_subject_vehicle[j-1]+(
+                    predicted_acceleration[j]*0.1)
+                differnce_of_preciding_and_following_velocity[j] = velocity_of_subject_vehicle[j] - \
+                    input_df.iloc[j]['previous_Vehicle_Velocity']
                 # rear_to_front_spacing[j] = rear_to_front_spacing[j-1]+((vel[j-1]*0.1)+ (0.5*predicted_acceleration[j]*pow(0.1,2)))
-                rear_to_front_spacing[j] = (velocity_of_subject_vehicle[j-1]*0.1) + (0.5*predicted_acceleration[j]*pow(0.1, 2))
+                rear_to_front_spacing[j] = (
+                    velocity_of_subject_vehicle[j-1]*0.1) + (0.5*predicted_acceleration[j]*pow(0.1, 2))
                 Local_Y_of_subject_vehicle[j] = Local_Y_of_subject_vehicle[j-1]
                 Vehicle_combination[j] = Vehicle_combination[j-1]
 
@@ -208,6 +200,7 @@ class ModelClass():
         return result
 
     def accuracy(self, F):
-        mae_score = mean_absolute_error(F['V_Acc'], F['predicted_acceleration'])
+        mae_score = mean_absolute_error(
+            F['V_Acc'], F['predicted_acceleration'])
         r2_scores = r2_score(F['V_Acc'], F['predicted_velocity'])
         return mae_score, r2_scores

@@ -24,6 +24,7 @@ class ModelClass():
     '''
 
     '''
+    saved_pairs = []
 
     def preprocessing(self, input_df, time_frame):
         input_df = self.create_prediction_pair(input_df, time_frame)
@@ -40,6 +41,35 @@ class ModelClass():
         model = self.fit_neural_network(model, X_train, y_train, X_val, y_val)
         predict_on_pair = self.prediction_test_pairs(test_df, 10, 12)
         predict_on_pair[0]
+        print(f"Prediction being done on :{predict_on_pair[0]}")
+        target_variable = 'nextframeAcc'
+
+        predicted_data = self.prediction(
+            test_df, predict_on_pair, target_variable, model, time_frame)
+        prediction_1 = predicted_data[predicted_data["L-F_Pair"]
+                                      == predict_on_pair[0]]
+
+        self.plot_prediction(prediction_1, 'pair_Time_Duration',
+                             'predicted_acceleration', 'nextframeAcc', 'Acceleration', time_frame)
+        self.plot_prediction(prediction_1, 'pair_Time_Duration',
+                             'predicted_velocity', 'v_Vel', 'Velocity', time_frame)
+        self.plot_prediction(prediction_1, 'pair_Time_Duration',
+                             'predicted_spacing', 'Rear_to_Front_Space_Headway', 'Spacing', time_frame)
+
+        return df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test, predicted_data, model
+
+    def fit_and_run_random_forest(self, df, time_frame):
+        shift_instance = time_frame*10
+        df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test = self.preprocessing(
+            df, shift_instance)
+        # define_fit_random_forest_model(self, train_df, test_df, regressors):
+        regressors = 25
+        rf = self.define_fit_random_forest_model(
+            regressors, train_df,  X_train, y_train, X_val, y_val)
+        predict_on_pair = self.prediction_test_pairs(test_df, 10, 12)
+
+        predict_on_pair[0]
+        print(f"Prediction being done on :{predict_on_pair[0]}")
         target_variable = 'nextframeAcc'
 
         predicted_data = self.prediction(
@@ -105,6 +135,20 @@ class ModelClass():
         model.summary()
 
         return model
+
+    def define_fit_random_forest_model(self, regressors, X_train, y_train, X_val, y_val):
+        '''
+        train/fit the model on train dataset. Also assign inputs variables to X_train, X_test, y_train, and y_test
+        X_train = train_df[['Rear_to_Front_Space_Headway', 'Vehicle_combination_cat',
+                            'Local_Y', 'Velocity Difference_Following-Preceding', 'v_Vel']]
+        y_train = train_df['nextframeAcc']
+        X_test = test_df[['Rear_to_Front_Space_Headway', 'Vehicle_combination_cat',
+                          'Local_Y', 'Velocity Difference_Following-Preceding', 'v_Vel']]
+        y_test = test_df['nextframeAcc']
+        '''
+        rf = RandomForestRegressor(n_estimators=regressors, n_jobs=-1)
+        rf.fit(X_train, y_train)
+        return rf
 
     def fit_neural_network(self, model, X_train, y_train, X_val, y_val):
         history = model.fit(X_train, y_train, epochs=10, batch_size=16,
@@ -187,6 +231,7 @@ class ModelClass():
         if seed > 0:
             random.seed(seed)
         #df = df.applymap(lambda x: float(round(x, 4))if isinstance(x, (int, float)) else x)
+
         total_pairs = df["L-F_Pair"].unique()
         total_pairs = total_pairs.tolist()
         test_split_cnt = round(len(total_pairs)*split)
@@ -283,8 +328,11 @@ class ModelClass():
 
                 s_preceding = ((input_df.iloc[j-1]['preceding_Vehicle_Velocity']*time_frame) + (
                     0.5*input_df.iloc[j-1]['preceding_Vehicle_Acceleration']*pow(time_frame, 2)))
-                spacing[j] = spacing[j-1] + s_preceding - s_subject
-
+                spacing_calc = spacing[j-1] + s_preceding - s_subject
+                if spacing_calc < 0:
+                    spacing[j] = 0
+                else:
+                    spacing[j] = spacing_calc
                 #local_y_subject[j] = local_y_subject[j-1] + s_subject
                 #spacing[j] = spacing[j-1]+ s_lead- s_subject
                 #local_y_preceding[j] = input_df.iloc[j-1]['preceding_Local_Y']
