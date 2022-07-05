@@ -38,7 +38,8 @@ class ModelClass():
         df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test = self.preprocessing(
             df, shift_instance)
         model = self.define_neural_network(X_train)
-        model = self.fit_neural_network(model, X_train, y_train, X_val, y_val)
+        model = self.fit_neural_network(
+            model, X_train, y_train, X_val, y_val, time_frame)
         predict_on_pair = self.prediction_test_pairs(test_df, 10, 12)
         predict_on_pair[0]
         print(f"Prediction being done on :{predict_on_pair[0]}")
@@ -101,7 +102,7 @@ class ModelClass():
 
     def define_neural_network(self, input_df):
 
-        #input = keras.Input(shape=(18,))
+        # input = keras.Input(shape=(18,))
         input_df = tensorflow.expand_dims(input_df, axis=-1)
 
         input = keras.Input(shape=(input_df.shape[1], 1))
@@ -111,14 +112,14 @@ class ModelClass():
         x = layers.Conv1D(filters=16, kernel_size=(
             2), padding='same', activation="sigmoid", name='Block1_Conv2')(x)
         x = layers.MaxPooling1D(pool_size=2, strides=2, name='Block1_Pool')(x)
-        #x = layers.BatchNormalization()(x)
+        # x = layers.BatchNormalization()(x)
         x = layers.Dropout(0.05)(x)
         x = layers.Conv1D(filters=32, kernel_size=(
             2), padding='same', activation="tanh", name='Block2_Conv1')(x)
         x = layers.Conv1D(filters=32, kernel_size=(
             2), padding='same', activation="tanh", name='Block2_Conv2')(x)
         x = layers.MaxPool1D(pool_size=2, strides=2, name='Block2_Pool')(x)
-        #x = layers.BatchNormalization()(x)
+        # x = layers.BatchNormalization()(x)
         x = layers.Dropout(0.05)(x)
         # prework for fully connected layer.
         x = layers.Flatten()(x)
@@ -150,9 +151,14 @@ class ModelClass():
         rf.fit(X_train, y_train)
         return rf
 
-    def fit_neural_network(self, model, X_train, y_train, X_val, y_val):
+    def fit_neural_network(self, model, X_train, y_train, X_val, y_val, reaction_time):
+        modelName = "neural_network_model" + str(reaction_time) + ".keras"
+        save_callback = keras.callbacks.ModelCheckpoint(
+            modelName, save_best_only=True)
+        early_stopping = keras.callbacks.EarlyStopping(
+            monitor='val_accuracy', verbose=1, patience=7)
         history = model.fit(X_train, y_train, epochs=10, batch_size=16,
-                            verbose=1, validation_data=(X_val, y_val))
+                            verbose=1, validation_data=(X_val, y_val), callbacks=[save_callback, early_stopping])
         # convertingt the accuracy of the model to a graph.
         # the dictionary that has the information on loss and accuracy per epoch
         history_dict = history.history
@@ -230,7 +236,7 @@ class ModelClass():
 
         if seed > 0:
             random.seed(seed)
-        #df = df.applymap(lambda x: float(round(x, 4))if isinstance(x, (int, float)) else x)
+        # df = df.applymap(lambda x: float(round(x, 4))if isinstance(x, (int, float)) else x)
 
         total_pairs = df["L-F_Pair"].unique()
         total_pairs = total_pairs.tolist()
@@ -264,19 +270,20 @@ class ModelClass():
         y_val = val_df['nextframeAcc']
         y_test = test_df['nextframeAcc']
 
-        #scaler = StandardScaler().fit(X_train)
-        #X_train = scaler.transform(X_train)
-        #X_test = scaler.transform(X_test)
+        # scaler = StandardScaler().fit(X_train)
+        # X_train = scaler.transform(X_train)
+        # X_test = scaler.transform(X_test)
 
         return X_train, y_train, X_val, y_val, X_test, y_test
     '''features:
-    'Rear_to_Front_Space_Headway', 
+    'Rear_to_Front_Space_Headway',
     'preceding_v_Class',
     "v_Class",
     'Velocity Difference_Following-Preceding',
     'v_Vel',
     'Location_cat']]
-    predicted_data = prediction(test_df, predict_on_pair, target_variable, model,0.1)
+    predicted_data = prediction(
+        test_df, predict_on_pair, target_variable, model,0.1)
     '''
 
     def prediction(self, test_df, test_range, target_variable, model, time_frame):
@@ -303,7 +310,7 @@ class ModelClass():
             local_y_preceding[0] = input_df.iloc[0]['preceding_Local_Y']
             preceding_vehicle_class = input_df.iloc[0]['preceding_v_Class']
             vehicle_class = input_df.iloc[0]['v_Class']
-            #vehicle_combination= input_df.iloc[0]['Vehicle_combination_cat']
+            # vehicle_combination= input_df.iloc[0]['Vehicle_combination_cat']
             length_preceding_vehicle = input_df.iloc[0]['preceding_vehicle_length']
             location = input_df.iloc[0]['Location_cat']
 
@@ -333,13 +340,13 @@ class ModelClass():
                     spacing[j] = 0
                 else:
                     spacing[j] = spacing_calc
-                #local_y_subject[j] = local_y_subject[j-1] + s_subject
-                #spacing[j] = spacing[j-1]+ s_lead- s_subject
-                #local_y_preceding[j] = input_df.iloc[j-1]['preceding_Local_Y']
+                # local_y_subject[j] = local_y_subject[j-1] + s_subject
+                # spacing[j] = spacing[j-1]+ s_lead- s_subject
+                # local_y_preceding[j] = input_df.iloc[j-1]['preceding_Local_Y']
                 # spacing[j] = local_y_preceding[j] - local_y_subject[j] - \
                 #    input_df.iloc[j-1]['preceding_Local_Y'] - \
                 #    length_preceding_vehicle
-                #print(f"s_subject: {s_subject},local_y_subject:{local_y_subject[j]},local_y_preceding: {local_y_preceding[j]},spacing[j]:{spacing[j]}")
+                # print(f"s_subject: {s_subject},local_y_subject:{local_y_subject[j]},local_y_preceding: {local_y_preceding[j]},spacing[j]:{spacing[j]}")
 
                 print(
                     f"s_subject: {s_subject},s_preceding:{s_preceding},previous spacing: {spacing[j-1]},spacing[j]:{spacing[j]}")
@@ -352,7 +359,7 @@ class ModelClass():
 
                 predict_for_input = np.array(
                     [spacing[j], preceding_vehicle_class, vehicle_class, dv[j], vel[j], location]).reshape(1, -1)
-                #pred_acc[j+1] = model.predict(np.array([spacing[j],vehicle_combination,local_y[j],dv[j],vel[j]]))
+                # pred_acc[j+1] = model.predict(np.array([spacing[j],vehicle_combination,local_y[j],dv[j],vel[j]]))
                 pred_acc[j+1] = model.predict(predict_for_input)
                 print(
                     f"j: {j},predict_for_input:{predict_for_input},pred_acc: {pred_acc[j+1]}")

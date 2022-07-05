@@ -31,8 +31,8 @@ class FileProcessing():
             df
         '''
 
-        ngsimfilteredfile = self.stringpath + '\\' + file_name + '.csv'
-        df.to_csv(ngsimfilteredfile, index=False)
+        filepathname = self.stringpath + '\\' + file_name + '.csv'
+        df.to_csv(filepathname, index=False)
         return True
 
     def merge_files(self, df1, df2):

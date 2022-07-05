@@ -61,8 +61,8 @@ class Cleanup():
                                 ((df['pair_Time_Duration'] <= 5) | (df['pair_Time_Duration'] >= (df['total_pair_duration'] - 5)))]
         both_lane_change_8 = df[(df['L-F_Pair'].isin(lf_pair_remove_first_last_5_seconds_lane1)) & (df['Lane_ID'] == 8) &
                                 ((df['pair_Time_Duration'] <= 5) | (df['pair_Time_Duration'] >= (df['total_pair_duration'] - 5)))]
-        #time_headway_less_than5 = df[(df['Time_Headway'] <= 5)]
-        time_headway_less_than5 = df[(df['Time_Headway'] <= 1)]
+
+        time_headway_less_than5 = df[(df['Time_Headway'] <= 5)]
         remove_ramp_data = df[(df['Lane_ID'] == 7) | (df['Lane_ID'] == 8)]
         '''
         both_lane_change = df[(df['preceding_car_lane_changes'] == True) & (df['lane_changes'] == True) & (
