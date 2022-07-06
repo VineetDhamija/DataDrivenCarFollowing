@@ -14,7 +14,6 @@ warnings.filterwarnings("ignore")
 
 class ModelClass():
     
-
     def preprocessing(self,df,time_frame):
         df["nextframeAcc"] = df.groupby(
             ["L-F_Pair"], as_index=False)["v_Acc"].shift(-10*time_frame)
