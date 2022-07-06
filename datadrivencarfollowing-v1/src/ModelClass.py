@@ -333,23 +333,22 @@ class ModelClass():
                 s_subject = ((vel[j-1]*time_frame) +
                              (0.5*pred_acc[j-1]*pow(time_frame, 2)))
 
-                s_preceding = ((input_df.iloc[j-1]['preceding_Vehicle_Velocity']*time_frame) + (
-                    0.5*input_df.iloc[j-1]['preceding_Vehicle_Acceleration']*pow(time_frame, 2)))
-                spacing_calc = spacing[j-1] + s_preceding - s_subject
+                # s_preceding = ((input_df.iloc[j-1]['preceding_Vehicle_Velocity']*time_frame) + (
+                #    0.5*input_df.iloc[j-1]['preceding_Vehicle_Acceleration']*pow(time_frame, 2)))
+                #spacing_calc = spacing[j-1] + s_preceding - s_subject
+                local_y_subject[j] = local_y_subject[j-1] + s_subject
+                # spacing[j] = spacing[j-1]+ s_lead- s_subject
+                local_y_preceding[j] = input_df.iloc[j-1]['preceding_Local_Y']
+                spacing_calc = local_y_preceding[j] - \
+                    local_y_subject[j] - length_preceding_vehicle
+                # print(f"s_subject: {s_subject},local_y_subject:{local_y_subject[j]},local_y_preceding: {local_y_preceding[j]},spacing[j]:{spacing[j]}")
                 if spacing_calc < 0:
                     spacing[j] = 0
                 else:
                     spacing[j] = spacing_calc
-                # local_y_subject[j] = local_y_subject[j-1] + s_subject
-                # spacing[j] = spacing[j-1]+ s_lead- s_subject
-                # local_y_preceding[j] = input_df.iloc[j-1]['preceding_Local_Y']
-                # spacing[j] = local_y_preceding[j] - local_y_subject[j] - \
-                #    input_df.iloc[j-1]['preceding_Local_Y'] - \
-                #    length_preceding_vehicle
-                # print(f"s_subject: {s_subject},local_y_subject:{local_y_subject[j]},local_y_preceding: {local_y_preceding[j]},spacing[j]:{spacing[j]}")
 
-                print(
-                    f"s_subject: {s_subject},s_preceding:{s_preceding},previous spacing: {spacing[j-1]},spacing[j]:{spacing[j]}")
+                # print(
+                #    f"s_subject: {s_subject},s_preceding:{s_preceding},previous spacing: {spacing[j-1]},spacing[j]:{spacing[j]}")
 
                 # as we are predicting the next values, we should not predict for the last one.
                 if j == len(input_df)-1:
