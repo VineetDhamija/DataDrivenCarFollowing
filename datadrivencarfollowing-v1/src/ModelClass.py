@@ -53,9 +53,9 @@ class ModelClass():
         self.plot_prediction(prediction_1, 'pair_Time_Duration',
                              'predicted_acceleration', 'nextframeAcc', 'Acceleration', time_frame)
         self.plot_prediction(prediction_1, 'pair_Time_Duration',
-                             'predicted_velocity', 'v_Vel', 'Velocity', time_frame)
+                             'predicted_velocity', 'nextframesvel', 'Velocity', time_frame)
         self.plot_prediction(prediction_1, 'pair_Time_Duration',
-                             'predicted_spacing', 'Rear_to_Front_Space_Headway', 'Spacing', time_frame)
+                             'predicted_spacing', 'nextFrameSpacing', 'Spacing', time_frame)
 
         return df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test, predicted_data, model
 
@@ -157,7 +157,7 @@ class ModelClass():
             modelName, save_best_only=True)
         early_stopping = keras.callbacks.EarlyStopping(
             monitor='val_accuracy', verbose=1, patience=7)
-        history = model.fit(X_train, y_train, epochs=10, batch_size=16,
+        history = model.fit(X_train, y_train, epochs=2, batch_size=16,
                             verbose=1, validation_data=(X_val, y_val), callbacks=[save_callback, early_stopping])
         # convertingt the accuracy of the model to a graph.
         # the dictionary that has the information on loss and accuracy per epoch
@@ -203,9 +203,12 @@ class ModelClass():
             ["L-F_Pair"], as_index=False)["v_Vel"].shift(-1*n)
         df["nextframeposition"] = df.groupby(
             ["L-F_Pair"], as_index=False)["Local_Y"].shift(-1*n)
+        df["nextFrameSpacing"] = df.groupby(
+            ["L-F_Pair"], as_index=False)["Rear_to_Front_Space_Headway"].shift(-1*n)
         df['nextframeposition'] = df['nextframeposition'].fillna(0)
         df['nextframesvel'] = df['nextframesvel'].fillna(0)
         df['nextframeAcc'] = df['nextframeAcc'].fillna(0)
+        df['nextFrameSpacing'] = df['nextFrameSpacing'].fillna(0)
 
         return df
 
@@ -342,8 +345,10 @@ class ModelClass():
                 spacing_calc = local_y_preceding[j] - \
                     local_y_subject[j] - length_preceding_vehicle
                 # print(f"s_subject: {s_subject},local_y_subject:{local_y_subject[j]},local_y_preceding: {local_y_preceding[j]},spacing[j]:{spacing[j]}")
+
                 if spacing_calc < 0:
-                    spacing[j] = 0
+                    #                    spacing[j] = 0
+                    spacing[j] = spacing_calc
                 else:
                     spacing[j] = spacing_calc
 

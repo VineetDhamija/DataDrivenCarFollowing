@@ -40,8 +40,12 @@ class Cleanup():
             ['Vehicle_ID'], as_index=False).count()
         remove_bad_data_vehicles = set(
             v_Class_verify[v_Class_verify["v_Class"] > 1]['Vehicle_ID'])
-        bad_v_Class_length = df[(
+        bad_v_Class_length_curr = df[(
             df['Vehicle_ID'].isin(remove_bad_data_vehicles))]
+        bad_v_Class_length_prev = df[(
+            df['Preceding'].isin(remove_bad_data_vehicles))]
+        bad_v_Class_length = pd.concat(
+            [bad_v_Class_length_curr, bad_v_Class_length_prev])
         lf_pair_remove_first_last_5_seconds_lane1, lf_pair_remove_first_last_5_seconds_lane2, lf_pair_remove_first_last_5_seconds_lane3, lf_pair_remove_first_last_5_seconds_lane4, lf_pair_remove_first_last_5_seconds_lane5, lf_pair_remove_first_last_5_seconds_lane6, lf_pair_remove_first_last_5_seconds_lane7, lf_pair_remove_first_last_5_seconds_lane8 = self.lane_change_info(
             df)
 
@@ -51,6 +55,7 @@ class Cleanup():
                                 ((df['pair_Time_Duration'] <= 5) | (df['pair_Time_Duration'] >= (df['total_pair_duration'] - 5)))]
         both_lane_change_3 = df[(df['L-F_Pair'].isin(lf_pair_remove_first_last_5_seconds_lane1)) & (df['Lane_ID'] == 3) &
                                 ((df['pair_Time_Duration'] <= 5) | (df['pair_Time_Duration'] >= (df['total_pair_duration'] - 5)))]
+        '''
         both_lane_change_4 = df[(df['L-F_Pair'].isin(lf_pair_remove_first_last_5_seconds_lane1)) & (df['Lane_ID'] == 4) &
                                 ((df['pair_Time_Duration'] <= 5) | (df['pair_Time_Duration'] >= (df['total_pair_duration'] - 5)))]
         both_lane_change_5 = df[(df['L-F_Pair'].isin(lf_pair_remove_first_last_5_seconds_lane1)) & (df['Lane_ID'] == 5) &
@@ -61,8 +66,8 @@ class Cleanup():
                                 ((df['pair_Time_Duration'] <= 5) | (df['pair_Time_Duration'] >= (df['total_pair_duration'] - 5)))]
         both_lane_change_8 = df[(df['L-F_Pair'].isin(lf_pair_remove_first_last_5_seconds_lane1)) & (df['Lane_ID'] == 8) &
                                 ((df['pair_Time_Duration'] <= 5) | (df['pair_Time_Duration'] >= (df['total_pair_duration'] - 5)))]
-
-        time_headway_less_than5 = df[(df['Time_Headway'] >= 5)]
+        '''
+        time_headway_less_than5 = df[(df['Time_Headway'] > 5)]
         remove_ramp_data = df[(df['Lane_ID'] >= 4)]
         '''
         both_lane_change = df[(df['preceding_car_lane_changes'] == True) & (df['lane_changes'] == True) & (
@@ -87,6 +92,7 @@ class Cleanup():
             f"{loc}: {both_lane_change_2.shape[0]} vehicles first and Last 5 seconds removed from Lane 2 due to lane changing")
         print(
             f"{loc}: {both_lane_change_3.shape[0]} vehicles first and Last 5 seconds removed from Lane 3 due to lane changing")
+        '''
         print(
             f"{loc}: {both_lane_change_4.shape[0]} vehicles first and Last 5 seconds removed from Lane 4 due to lane changing")
         print(
@@ -97,6 +103,7 @@ class Cleanup():
             f"{loc}: {both_lane_change_7.shape[0]} vehicles first and Last 5 seconds removed from Lane 7 due to lane changing")
         print(
             f"{loc}: {both_lane_change_8.shape[0]} vehicles first and Last 5 seconds removed from Lane 8 due to lane changing")
+        '''
         print(
             f"{loc}: {bad_v_Class_length.shape[0]} have multiple lengths and classes for same Vehicle ID")
         print(
@@ -108,8 +115,11 @@ class Cleanup():
 
         # remove = pd.concat([both_lane_change, lead_change,
         #                    subject_change, total_duration_less_than_minute, bad_v_Class_length])
+        # remove = pd.concat(
+        #    [time_headway_less_than5, total_duration_less_than_minute, bad_v_Class_length, both_lane_change_1, both_lane_change_2, both_lane_change_3, both_lane_change_4, both_lane_change_5, both_lane_change_6, both_lane_change_7, both_lane_change_8, remove_ramp_data])
         remove = pd.concat(
-            [time_headway_less_than5, total_duration_less_than_minute, bad_v_Class_length, both_lane_change_1, both_lane_change_2, both_lane_change_3, both_lane_change_4, both_lane_change_5, both_lane_change_6, both_lane_change_7, both_lane_change_8, remove_ramp_data])
+            [time_headway_less_than5, total_duration_less_than_minute, bad_v_Class_length, both_lane_change_1, both_lane_change_2, both_lane_change_3, remove_ramp_data])
+
         df.drop(labels=remove.index, inplace=True)
         after = df.shape[0]
         removed_row_count = before - after
