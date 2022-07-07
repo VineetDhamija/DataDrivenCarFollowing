@@ -80,26 +80,26 @@ class ModelClass():
         input = keras.Input(shape=(input_df.shape[1], 1))
 
         x = layers.Conv1D(filters=16, kernel_size=(
-            2), padding='same', activation="sigmoid", name='Block1_Conv1')(input)
+            2), padding='same', activation="elu", name='Block1_Conv1')(input)
         x = layers.Conv1D(filters=16, kernel_size=(
-            2), padding='same', activation="sigmoid", name='Block1_Conv2')(x)
+            2), padding='same', activation="elu", name='Block1_Conv2')(x)
         x = layers.MaxPooling1D(pool_size=2, strides=2, name='Block1_Pool')(x)
         # x = layers.BatchNormalization()(x)
         x = layers.Dropout(0.05)(x)
         x = layers.Conv1D(filters=32, kernel_size=(
-            2), padding='same', activation="tanh", name='Block2_Conv1')(x)
+            2), padding='same', activation="elu", name='Block2_Conv1')(x)
         x = layers.Conv1D(filters=32, kernel_size=(
-            2), padding='same', activation="tanh", name='Block2_Conv2')(x)
+            2), padding='same', activation="elyuu", name='Block2_Conv2')(x)
         x = layers.MaxPool1D(pool_size=2, strides=2, name='Block2_Pool')(x)
         # x = layers.BatchNormalization()(x)
         x = layers.Dropout(0.05)(x)
         # prework for fully connected layer.
         x = layers.Flatten()(x)
         # Fully connected layers
-        x = layers.Dense(128, activation='tanh')(x)
-        x = layers.Dense(64, activation='sigmoid')(x)
-        x = layers.Dense(16, activation='tanh')(x)
-        outputs = layers.Dense(1, activation="sigmoid")(x)
+        x = layers.Dense(128, activation='elu')(x)
+        x = layers.Dense(64, activation='elu')(x)
+        x = layers.Dense(16, activation='elu')(x)
+        outputs = layers.Dense(1, activation="elu")(x)
 
         model = keras.Model(inputs=input, outputs=outputs)
         model.compile(optimizer='adam',
@@ -129,7 +129,7 @@ class ModelClass():
             modelName, save_best_only=True)
         early_stopping = keras.callbacks.EarlyStopping(
             monitor='val_accuracy', verbose=1, patience=7)
-        history = model.fit(X_train, y_train, epochs=1, batch_size=16,
+        history = model.fit(X_train, y_train, epochs=10, batch_size=16,
                             verbose=1, validation_data=(X_val, y_val), callbacks=[save_callback, early_stopping])
         # convertingt the accuracy of the model to a graph.
         # the dictionary that has the information on loss and accuracy per epoch
