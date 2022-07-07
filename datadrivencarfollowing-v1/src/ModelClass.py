@@ -313,76 +313,70 @@ class ModelClass():
             spacing[0] = input_df.iloc[0]['Rear_to_Front_Space_Headway']
             dv[0] = input_df.iloc[0]['Velocity Difference_Following-Preceding']
 
-            pred_acc[0] = input_df.iloc[0]['v_Acc']
             local_y_subject[0] = input_df.iloc[0]['Local_Y']
+
             local_y_preceding[0] = input_df.iloc[0]['preceding_Local_Y']
             preceding_vehicle_class = input_df.iloc[0]['preceding_v_Class']
             vehicle_class = input_df.iloc[0]['v_Class']
-            # vehicle_combination= input_df.iloc[0]['Vehicle_combination_cat']
             length_preceding_vehicle = input_df.iloc[0]['preceding_vehicle_length']
             location = input_df.iloc[0]['Location_cat']
 
-            # predicting first value of acceleration
-
             predict_for_input = np.array(
                 [spacing[0], preceding_vehicle_class, vehicle_class, dv[0], vel[0], location]).reshape(1, -1)
-            pred_acc[1] = model.predict(predict_for_input)
+            pred_acc[0] = model.predict(predict_for_input)
             print(
-                f"j: {0} input:{predict_for_input},subject localy:{local_y_subject[0]},preceding_local_y:{local_y_preceding[0]},spacing:{spacing[0]} pred_acc: {pred_acc[1]}")
-            # calculating vel,frspacing,local.y,dv from the predicted acceleration.
+                f"j: {0} input:{predict_for_input},subject localy:{local_y_subject[0]},preceding_local_y:{local_y_preceding[0]},spacing:{spacing[0]} pred_acc: {pred_acc[0]}")
+            vel[1] = vel[0]+(pred_acc[0]*delta_time)
+
+
+            dv[1] = vel[1] - input_df.iloc[1]['preceding_Vehicle_Velocity']
+
+            s_subject[0] = ((vel[0]*delta_time ) +
+                            (0.5*pred_acc[0]*pow(delta_time, 2)))
+                            #should be 1  second here
+            print(f"row 0=s_subject:{s_subject[0]}")
+            local_y_subject[1] = local_y_subject[0] + s_subject[0]
+            local_y_preceding[1] = input_df.iloc[1]['preceding_Local_Y'] 
+
+            spacing[1] = local_y_preceding[1] - \
+                local_y_subject[1] - length_preceding_vehicle
 
             for j in range(1, len(input_df)):
-                # v= u + at
-                vel[j] = vel[j-1]+(pred_acc[j-1]*time_frame)
-
-            # dv=current velocity of subject - velocity of Lead/Preceding
-                dv[j] = vel[j] - input_df.iloc[j]['preceding_Vehicle_Velocity']
-
-            # distance travelled by vehicle. :s
-            # s = ut + 0.5*a*t^2
-                s_subject = ((vel[j-1]*time_frame) +
-                             (0.5*pred_acc[j-1]*pow(time_frame, 2)))
-
-                # s_preceding = ((input_df.iloc[j-1]['preceding_Vehicle_Velocity']*time_frame) + (
-                #    0.5*input_df.iloc[j-1]['preceding_Vehicle_Acceleration']*pow(time_frame, 2)))
-                #spacing_calc = spacing[j-1] + s_preceding - s_subject
-                local_y_subject[j] = local_y_subject[j-1] + s_subject
-                # spacing[j] = spacing[j-1]+ s_lead- s_subject
-                local_y_preceding[j] = input_df.iloc[j]['preceding_Local_Y']
-
-                # if local_y_subject[j] > local_y_preceding[j]:
-                #    local_y_subject[j] = local_y_preceding[j]
-
-                spacing[j] = local_y_preceding[j] - \
-                    local_y_subject[j] - length_preceding_vehicle
-                # print(f"s_subject: {s_subject},local_y_subject:{local_y_subject[j]},local_y_preceding: {local_y_preceding[j]},spacing[j]:{spacing[j]}")
-
-                # print(
-                #    f"s_subject: {s_subject},s_preceding:{s_preceding},previous spacing: {spacing[j-1]},spacing[j]:{spacing[j]}")
-
-                # as we are predicting the next values, we should not predict for the last one.
-                if j == len(input_df)-1:
-                    break
-                # if j == 5: # this is temporary
-                #    break
-
                 predict_for_input = np.array(
                     [spacing[j], preceding_vehicle_class, vehicle_class, dv[j], vel[j], location]).reshape(1, -1)
-                # pred_acc[j+1] = model.predict(np.array([spacing[j],vehicle_combination,local_y[j],dv[j],vel[j]]))
-                pred_acc[j+1] = model.predict(predict_for_input)
-                print(
-                    f"j: {j} input:{predict_for_input},subject localy:{local_y_subject[j]},preceding_local_y:{local_y_preceding[j]},spacing:{spacing[j]} pred_acc: {pred_acc[j+1]}")
+                
+                pred_acc[j] = model.predict(predict_for_input)
+                if j == len(input_df)-1:
+                    break
+                
+                vel[j+1] = vel[j]+(pred_acc[j]*0.1)
 
-                ########
-                # print(pred_acc)
-                ########
+
+                dv[j+1] = vel[j+1] - input_df.iloc[j+1]['preceding_Vehicle_Velocity']
+
+
+                s_subject[j] = ((vel[j]*0.1) +
+                                (0.5*pred_acc[j]*pow(0.1, 2)))
+                                
+
+                
+                local_y_subject[j+1] = local_y_subject[j] + s_subject[j]
+                local_y_preceding[j+1] = input_df.iloc[j+1]['preceding_Local_Y']
+
+                spacing[j+1] = local_y_preceding[j+1] - \
+                    local_y_subject[j+1] - length_preceding_vehicle
+
+                print(f"j: {j} input:{predict_for_input},subject localy:{local_y_subject[j]},preceding_local_y:{local_y_preceding[j]},spacing:{spacing[j]} pred_acc: {pred_acc[j]}")
 
             print(f"input_df shape: {input_df.shape}")
             print(f"pred_acc shape: {pred_acc.shape}")
             input_df['predicted_acceleration'] = pred_acc
             input_df['predicted_velocity'] = vel
+            input_df['predicted_Local_Y'] = local_y_subject
             input_df['predicted_spacing'] = spacing
-
+            input_df['preceding_Local_Y_used']=local_y_preceding
+            input_df['s_subject']=s_subject
+                        
             predicted_df.append(input_df)
             result = pd.concat(predicted_df)
         return result
