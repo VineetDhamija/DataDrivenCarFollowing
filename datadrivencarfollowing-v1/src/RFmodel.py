@@ -15,12 +15,15 @@ warnings.filterwarnings("ignore")
 class ModelClass():
     
     def preprocessing(self,df,time_frame):
+        time_frame =0.1
         df["nextframeAcc"] = df.groupby(
             ["L-F_Pair"], as_index=False)["v_Acc"].shift(-10*time_frame)
         df["nextframesvel"] = df.groupby(
             ["L-F_Pair"], as_index=False)["v_Vel"].shift(-10*time_frame)
         df["nextframeposition"] = df.groupby(
             ["L-F_Pair"], as_index=False)["Local_Y"].shift(-10*time_frame)
+        df["nextframespacing"] = df.groupby(
+            ["L-F_Pair"], as_index=False)["Rear_to_Front_Space_Headway"].shift(-10*time_frame)           
         df['Pair_Time_Duration']=(df.groupby(['L-F_Pair'],as_index=False).cumcount()*0.1) +0.1
         df['PrecVehType'] = df['Preceding_Vehicle_Class'].map({'Motorcycle': 1, 'Car': 2, 'Heavy Vehicle': 3, 'Free Flow':4})
         df['Vehicle.type'] = df['v_Class']
@@ -80,8 +83,8 @@ class ModelClass():
             local_y_subject = np.zeros(input_df.shape[0])
             local_y_preceding = np.zeros(input_df.shape[0])
             pred_acc = np.zeros(input_df.shape[0])
+
             
-        
             #adding first value of the vehicle
             vel[0]=input_df.iloc[0]['v_Vel']
             PrecVehType[0]=input_df.iloc[0]['PrecVehType']
@@ -94,7 +97,6 @@ class ModelClass():
             
         #?? verify this     
             pred_acc[0] = input_df.iloc[1][target_variable]
-        
         
 
     #     #predicting first value of acceleration
@@ -112,12 +114,19 @@ class ModelClass():
     #         ########
                 vel[j] = vel[j-1]+(pred_acc[j-1]*time_frame)
                 dv[j] = vel[j] - input_df.iloc[j]['previous_Vehicle_Velocity']
-                s = ((vel[j-1]*time_frame)+ (0.5*pred_acc[j-1]*pow(time_frame,2)))
-                local_y_subject[j]=  local_y_subject[j-1] + s
-                local_y_preceding[j]=  input_df.iloc[j-1]['previous_Local_Y']
-                spacing[j]=local_y_preceding[j] - local_y_subject[j] - input_df.iloc[j-1]['previous_Local_Y'] -length_previous_vehicle
+               # s_subject[j] = ((vel[j-1]*time_frame) +
+                #             (0.5*pred_acc[j-1]*pow(time_frame, 2)))
+                #s_preceding[j] = ((input_df.iloc[j-1]['previous_Vehicle_Velocity']*time_frame) + (
+                 #   0.5*input_df.iloc[j-1]['previous_Vehicle_Acceleration']*pow(time_frame, 2)))
+               # spacing[j] = spacing[j-1] + s_preceding[j] - s_subject[j]
+               # spacing[j]=local_y_preceding[j] - local_y_subject[j] - input_df.iloc[j-1]['previous_Local_Y'] -length_previous_vehicle
                 PrecVehType[j]= PrecVehType[j-1]
                 FollVehtype[j]=FollVehtype[j-1]
+                s = ((vel[j-1]*time_frame)+ (0.5*pred_acc[j-1]*pow(time_frame,2)))
+                local_y_subject[j]=  local_y_subject[j-1] + s
+                local_y_preceding[j]=  input_df.iloc[j]['previous_Local_Y']
+                spacing[j]=local_y_preceding[j] - local_y_subject[j]-length_previous_vehicle
+                #spacing[j] = spacing[j-1]+((vel[j-1]*0.1)+ (0.5*pred_acc[j]*pow(0.1,2)))
     #         ########
     #         ## localy: s = ut + 0.5*a*t^2
     #         ########
@@ -130,11 +139,12 @@ class ModelClass():
     #         ########
             input_df['pacc']=pred_acc
             input_df['pvel']=vel
-
+            input_df['pspacing']=spacing
+            input_df['plocal_y_subject']=local_y_subject
             predicted_df.append(input_df)
             result = pd.concat(predicted_df)
             #r.append(r2_score(Q[target_variable], Q['pacc']))      
-            return result
+        return result
 
     def plot_1(self, df,nextframe,prediction,title):
         plt.figure(figsize=(10, 8))
