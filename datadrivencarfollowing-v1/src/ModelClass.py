@@ -157,7 +157,7 @@ class ModelClass():
             modelName, save_best_only=True)
         early_stopping = keras.callbacks.EarlyStopping(
             monitor='val_accuracy', verbose=1, patience=7)
-        history = model.fit(X_train, y_train, epochs=2, batch_size=16,
+        history = model.fit(X_train, y_train, epochs=1, batch_size=16,
                             verbose=1, validation_data=(X_val, y_val), callbacks=[save_callback, early_stopping])
         # convertingt the accuracy of the model to a graph.
         # the dictionary that has the information on loss and accuracy per epoch
@@ -205,10 +205,14 @@ class ModelClass():
             ["L-F_Pair"], as_index=False)["Local_Y"].shift(-1*n)
         df["nextFrameSpacing"] = df.groupby(
             ["L-F_Pair"], as_index=False)["Rear_to_Front_Space_Headway"].shift(-1*n)
-        df['nextframeposition'] = df['nextframeposition'].fillna(0)
-        df['nextframesvel'] = df['nextframesvel'].fillna(0)
-        df['nextframeAcc'] = df['nextframeAcc'].fillna(0)
-        df['nextFrameSpacing'] = df['nextFrameSpacing'].fillna(0)
+        df["precnextframeposition"] = df.groupby(
+            ["L-F_Pair"], as_index=False)["preceding_Local_Y"].shift(-1*n)
+        df["precnextframesvel"] = df.groupby(
+            ["L-F_Pair"], as_index=False)["preceding_Vehicle_Velocity"].shift(-1*n)
+        df = df[df['nextframeposition'].notna()]
+        df = df[df['nextframesvel'].notna()]
+        df = df[df['nextframeAcc'].notna()]
+        df = df[df['nextFrameSpacing'].notna()]
 
         return df
 
@@ -290,6 +294,7 @@ class ModelClass():
     '''
 
     def prediction(self, test_df, test_range, target_variable, model, time_frame):
+        time_frame = 0.1
         predicted_df = []
         # this loop runs for each pair required predictions.
         for current_pair in test_range:
@@ -322,6 +327,8 @@ class ModelClass():
             predict_for_input = np.array(
                 [spacing[0], preceding_vehicle_class, vehicle_class, dv[0], vel[0], location]).reshape(1, -1)
             pred_acc[1] = model.predict(predict_for_input)
+            print(
+                f"j: {0} input:{predict_for_input},subject localy:{local_y_subject[0]},preceding_local_y:{local_y_preceding[0]},spacing:{spacing[0]} pred_acc: {pred_acc[1]}")
             # calculating vel,frspacing,local.y,dv from the predicted acceleration.
 
             for j in range(1, len(input_df)):
@@ -341,16 +348,14 @@ class ModelClass():
                 #spacing_calc = spacing[j-1] + s_preceding - s_subject
                 local_y_subject[j] = local_y_subject[j-1] + s_subject
                 # spacing[j] = spacing[j-1]+ s_lead- s_subject
-                local_y_preceding[j] = input_df.iloc[j-1]['preceding_Local_Y']
-                spacing_calc = local_y_preceding[j] - \
+                local_y_preceding[j] = input_df.iloc[j]['preceding_Local_Y']
+
+                # if local_y_subject[j] > local_y_preceding[j]:
+                #    local_y_subject[j] = local_y_preceding[j]
+
+                spacing[j] = local_y_preceding[j] - \
                     local_y_subject[j] - length_preceding_vehicle
                 # print(f"s_subject: {s_subject},local_y_subject:{local_y_subject[j]},local_y_preceding: {local_y_preceding[j]},spacing[j]:{spacing[j]}")
-
-                if spacing_calc < 0:
-                    #                    spacing[j] = 0
-                    spacing[j] = spacing_calc
-                else:
-                    spacing[j] = spacing_calc
 
                 # print(
                 #    f"s_subject: {s_subject},s_preceding:{s_preceding},previous spacing: {spacing[j-1]},spacing[j]:{spacing[j]}")
@@ -366,7 +371,7 @@ class ModelClass():
                 # pred_acc[j+1] = model.predict(np.array([spacing[j],vehicle_combination,local_y[j],dv[j],vel[j]]))
                 pred_acc[j+1] = model.predict(predict_for_input)
                 print(
-                    f"j: {j},predict_for_input:{predict_for_input},pred_acc: {pred_acc[j+1]}")
+                    f"j: {j} input:{predict_for_input},subject localy:{local_y_subject[j]},preceding_local_y:{local_y_preceding[j]},spacing:{spacing[j]} pred_acc: {pred_acc[j+1]}")
 
                 ########
                 # print(pred_acc)
