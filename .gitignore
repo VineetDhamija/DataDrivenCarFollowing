@@ -129,14 +129,20 @@ dmypy.json
 # Pyre type checker
 .pyre/
 datadrivencarfollowing-v1/data/Next_Generation_Simulation__NGSIM__Vehicle_Trajectories_and_Supporting_Data.csv
-<<<<<<< Updated upstream
 data/
-datadrivencarfollowing-v1/scripts/EDA_NGSIM_NC.ipynb
-=======
-data/
->>>>>>> Stashed changes
 datadrivencarfollowing-v1/scripts/car1748.csv
 datadrivencarfollowing-v1/scripts/VERIFYFILE.CSV
 datadrivencarfollowing-v1/scripts/I80_1st15minutes_complete.rds
-datadrivencarfollowing-v1/src/clean/classNC.ipynb
-datadrivencarfollowing-v1/src/clean/classNC.ipynb
+datadrivencarfollowing-v1/scripts/badacc.xlsx
+datadrivencarfollowing-v1/scripts/test.xlsx
+.gitignore
+datadrivencarfollowing-v1/scripts/t.xlsx
+datadrivencarfollowing-v1/scripts/pvel.xlsx
+datadrivencarfollowing-v1/scripts/test.csv
+.gitignore
+datadrivencarfollowing-v1/src/clean/reaction0.1/r.xlsx
+datadrivencarfollowing-v1/scripts/~$badacc.xlsx
+datadrivencarfollowing-v1/scripts/~$pvel.xlsx
+datadrivencarfollowing-v1/scripts/~$t.xlsx
+datadrivencarfollowing-v1/scripts/~$test.xlsx
+datadrivencarfollowing-v1/src/clean/reaction0.1/~$r.xlsx
