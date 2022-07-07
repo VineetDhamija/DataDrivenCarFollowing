@@ -138,3 +138,16 @@ data/
 datadrivencarfollowing-v1/scripts/car1748.csv
 datadrivencarfollowing-v1/scripts/VERIFYFILE.CSV
 datadrivencarfollowing-v1/scripts/I80_1st15minutes_complete.rds
+datadrivencarfollowing-v1/scripts/badacc.xlsx
+datadrivencarfollowing-v1/scripts/test.xlsx
+.gitignore
+datadrivencarfollowing-v1/scripts/t.xlsx
+datadrivencarfollowing-v1/scripts/pvel.xlsx
+datadrivencarfollowing-v1/scripts/test.csv
+.gitignore
+datadrivencarfollowing-v1/src/clean/reaction0.1/r.xlsx
+datadrivencarfollowing-v1/scripts/~$badacc.xlsx
+datadrivencarfollowing-v1/scripts/~$pvel.xlsx
+datadrivencarfollowing-v1/scripts/~$t.xlsx
+datadrivencarfollowing-v1/scripts/~$test.xlsx
+datadrivencarfollowing-v1/src/clean/reaction0.1/~$r.xlsx
