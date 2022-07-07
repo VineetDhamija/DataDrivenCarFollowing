@@ -15,15 +15,12 @@ warnings.filterwarnings("ignore")
 class ModelClass():
     
     def preprocessing(self,df,time_frame):
-        time_frame =0.1
         df["nextframeAcc"] = df.groupby(
             ["L-F_Pair"], as_index=False)["v_Acc"].shift(-10*time_frame)
         df["nextframesvel"] = df.groupby(
             ["L-F_Pair"], as_index=False)["v_Vel"].shift(-10*time_frame)
         df["nextframeposition"] = df.groupby(
             ["L-F_Pair"], as_index=False)["Local_Y"].shift(-10*time_frame)
-        df["nextframespacing"] = df.groupby(
-            ["L-F_Pair"], as_index=False)["Rear_to_Front_Space_Headway"].shift(-10*time_frame)           
         df['Pair_Time_Duration']=(df.groupby(['L-F_Pair'],as_index=False).cumcount()*0.1) +0.1
         df['PrecVehType'] = df['Preceding_Vehicle_Class'].map({'Motorcycle': 1, 'Car': 2, 'Heavy Vehicle': 3, 'Free Flow':4})
         df['Vehicle.type'] = df['v_Class']
@@ -148,7 +145,7 @@ class ModelClass():
             predicted_df.append(input_df)
             result = pd.concat(predicted_df)
             #r.append(r2_score(Q[target_variable], Q['pacc']))      
-        return result
+            return result
 
     def plot_1(self, df,nextframe,prediction,title):
         plt.figure(figsize=(10, 8))
