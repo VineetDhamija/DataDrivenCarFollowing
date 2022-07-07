@@ -59,6 +59,34 @@ class ModelClass():
 
         return df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test, predicted_data, model
 
+    def fit_and_run_random_forest(self, df, time_frame):
+        shift_instance = time_frame*10
+        df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test = self.preprocessing(
+            df, shift_instance)
+        # define_fit_random_forest_model(self, train_df, test_df, regressors):
+        regressors = 25
+        rf = self.define_fit_random_forest_model(
+            regressors, train_df,  X_train, y_train, X_val, y_val)
+        predict_on_pair = self.prediction_test_pairs(test_df, 10, 12)
+
+        predict_on_pair[0]
+        print(f"Prediction being done on :{predict_on_pair[0]}")
+        target_variable = 'nextframeAcc'
+
+        predicted_data = self.prediction(
+            test_df, predict_on_pair, target_variable, model, time_frame)
+        prediction_1 = predicted_data[predicted_data["L-F_Pair"]
+                                      == predict_on_pair[0]]
+
+        self.plot_prediction(prediction_1, 'pair_Time_Duration',
+                             'predicted_acceleration', 'nextframeAcc', 'Acceleration', time_frame)
+        self.plot_prediction(prediction_1, 'pair_Time_Duration',
+                             'predicted_velocity', 'v_Vel', 'Velocity', time_frame)
+        self.plot_prediction(prediction_1, 'pair_Time_Duration',
+                             'predicted_spacing', 'Rear_to_Front_Space_Headway', 'Spacing', time_frame)
+
+        return df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test, predicted_data, model
+
     def plot_prediction(self, df, col_x, predicted_y, actual_y, name, time_frame):
         plt.figure(figsize=(11, 9))
         label1 = "Actual" + str(name) + "Value"
@@ -265,7 +293,7 @@ class ModelClass():
         test_df, predict_on_pair, target_variable, model,0.1)
     '''
 
-    def prediction(self, test_df, test_range, target_variable, model, delta_time):
+    def prediction(self, test_df, test_range, target_variable, model, time_frame):
         time_frame = 0.1
         predicted_df = []
         # this loop runs for each pair required predictions.
@@ -279,7 +307,6 @@ class ModelClass():
             dv = np.zeros(input_df.shape[0])
             vel = np.zeros(input_df.shape[0])
             pred_acc = np.zeros(input_df.shape[0])
-            s_subject = np.zeros(input_df.shape[0])
 
             # updating the values for first Predictions
             vel[0] = input_df.iloc[0]['v_Vel']
@@ -300,16 +327,16 @@ class ModelClass():
             print(
                 f"j: {0} input:{predict_for_input},subject localy:{local_y_subject[0]},preceding_local_y:{local_y_preceding[0]},spacing:{spacing[0]} pred_acc: {pred_acc[0]}")
             vel[1] = vel[0]+(pred_acc[0]*delta_time)
-            if vel[1] < 0:
-                vel[1] = 0
+
+
             dv[1] = vel[1] - input_df.iloc[1]['preceding_Vehicle_Velocity']
 
-            s_subject[0] = ((vel[0]*delta_time) +
+            s_subject[0] = ((vel[0]*delta_time ) +
                             (0.5*pred_acc[0]*pow(delta_time, 2)))
-            # should be 1  second here
+                            #should be 1  second here
             print(f"row 0=s_subject:{s_subject[0]}")
             local_y_subject[1] = local_y_subject[0] + s_subject[0]
-            local_y_preceding[1] = input_df.iloc[1]['preceding_Local_Y']
+            local_y_preceding[1] = input_df.iloc[1]['preceding_Local_Y'] 
 
             spacing[1] = local_y_preceding[1] - \
                 local_y_subject[1] - length_preceding_vehicle
@@ -317,31 +344,29 @@ class ModelClass():
             for j in range(1, len(input_df)):
                 predict_for_input = np.array(
                     [spacing[j], preceding_vehicle_class, vehicle_class, dv[j], vel[j], location]).reshape(1, -1)
-
+                
                 pred_acc[j] = model.predict(predict_for_input)
                 if j == len(input_df)-1:
                     break
-
+                
                 vel[j+1] = vel[j]+(pred_acc[j]*0.1)
 
-                if vel[j+1] < 0:
-                    vel[j+1]
 
-                dv[j+1] = vel[j+1] - input_df.iloc[j +
-                                                   1]['preceding_Vehicle_Velocity']
+                dv[j+1] = vel[j+1] - input_df.iloc[j+1]['preceding_Vehicle_Velocity']
+
 
                 s_subject[j] = ((vel[j]*0.1) +
                                 (0.5*pred_acc[j]*pow(0.1, 2)))
+                                
 
+                
                 local_y_subject[j+1] = local_y_subject[j] + s_subject[j]
-                local_y_preceding[j+1] = input_df.iloc[j +
-                                                       1]['preceding_Local_Y']
+                local_y_preceding[j+1] = input_df.iloc[j+1]['preceding_Local_Y']
 
                 spacing[j+1] = local_y_preceding[j+1] - \
                     local_y_subject[j+1] - length_preceding_vehicle
 
-                print(
-                    f"j: {j} input:{predict_for_input},subject localy:{local_y_subject[j]},preceding_local_y:{local_y_preceding[j]},spacing:{spacing[j]} pred_acc: {pred_acc[j]}")
+                print(f"j: {j} input:{predict_for_input},subject localy:{local_y_subject[j]},preceding_local_y:{local_y_preceding[j]},spacing:{spacing[j]} pred_acc: {pred_acc[j]}")
 
             print(f"input_df shape: {input_df.shape}")
             print(f"pred_acc shape: {pred_acc.shape}")
@@ -349,9 +374,9 @@ class ModelClass():
             input_df['predicted_velocity'] = vel
             input_df['predicted_Local_Y'] = local_y_subject
             input_df['predicted_spacing'] = spacing
-            input_df['preceding_Local_Y_used'] = local_y_preceding
-            input_df['s_subject'] = s_subject
-
+            input_df['preceding_Local_Y_used']=local_y_preceding
+            input_df['s_subject']=s_subject
+                        
             predicted_df.append(input_df)
             result = pd.concat(predicted_df)
         return result
