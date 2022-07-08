@@ -108,16 +108,55 @@ class ModelClass():
         input = keras.Input(shape=(input_df.shape[1], 1))
 
         x = layers.Conv1D(filters=16, kernel_size=(
-            2), padding='same', activation="elu", name='Block1_Conv1')(input)
+            2), padding='same', activation="sigmoid", name='Block1_Conv1')(input)
         x = layers.Conv1D(filters=16, kernel_size=(
-            2), padding='same', activation="elu", name='Block1_Conv2')(x)
+            2), padding='same', activation="sigmoid", name='Block1_Conv2')(x)
         x = layers.MaxPooling1D(pool_size=2, strides=2, name='Block1_Pool')(x)
         # x = layers.BatchNormalization()(x)
         x = layers.Dropout(0.05)(x)
         x = layers.Conv1D(filters=32, kernel_size=(
             2), padding='same', activation="elu", name='Block2_Conv1')(x)
         x = layers.Conv1D(filters=32, kernel_size=(
-            2), padding='same', activation="elyuu", name='Block2_Conv2')(x)
+            2), padding='same', activation="elu", name='Block2_Conv2')(x)
+        x = layers.MaxPool1D(pool_size=2, strides=2, name='Block2_Pool')(x)
+        x = layers.Dropout(0.05)(x)
+        x = layers.Conv1D(filters=32, kernel_size=(
+            2), padding='same', activation="tanh", name='Block2_Conv1')(x)
+        x = layers.Conv1D(filters=32, kernel_size=(
+            2), padding='same', activation="tanh", name='Block2_Conv2')(x)
+        x = layers.MaxPool1D(pool_size=2, strides=2, name='Block2_Pool')(x)
+        # x = layers.BatchNormalization()(x)
+        x = layers.Dropout(0.05)(x)
+        # prework for fully connected layer.
+        x = layers.Flatten()(x)
+        # Fully connected layers
+        x = layers.Dense(128, activation='tanh')(x)
+        x = layers.Dense(64, activation='sigmoid')(x)
+        x = layers.Dense(16, activation='tanh')(x)
+        outputs = layers.Dense(1, activation="elu")(x)
+
+        model = keras.Model(inputs=input, outputs=outputs)
+        model.compile(optimizer='adam',
+                      loss='mean_squared_error',
+                      metrics=['accuracy'])
+        model.summary()
+
+        return model
+
+    '''
+    def define_neural_network(self, input_df):
+        # input = keras.Input(shape=(18,))
+        input_df = tensorflow.expand_dims(input_df, axis=-1)
+
+        input = keras.Input(shape=(input_df.shape[1], 1))
+
+        x = layers.Conv1D(filters=16, kernel_size=(2), padding='same', activation="elu", name='Block1_Conv1')(input)
+        x = layers.Conv1D(filters=16, kernel_size=(2), padding='same', activation="elu", name='Block1_Conv2')(x)
+        x = layers.MaxPooling1D(pool_size=2, strides=2, name='Block1_Pool')(x)
+        # x = layers.BatchNormalization()(x)
+        x = layers.Dropout(0.05)(x)
+        x = layers.Conv1D(filters=32, kernel_size=(2), padding='same', activation="elu", name='Block2_Conv1')(x)
+        x = layers.Conv1D(filters=32, kernel_size=(2), padding='same', activation="elu", name='Block2_Conv2')(x)
         x = layers.MaxPool1D(pool_size=2, strides=2, name='Block2_Pool')(x)
         # x = layers.BatchNormalization()(x)
         x = layers.Dropout(0.05)(x)
@@ -136,6 +175,7 @@ class ModelClass():
         model.summary()
 
         return model
+    '''
 
     def define_fit_random_forest_model(self, regressors, X_train, y_train, X_val, y_val):
         '''
@@ -157,7 +197,7 @@ class ModelClass():
             modelName, save_best_only=True)
         early_stopping = keras.callbacks.EarlyStopping(
             monitor='val_accuracy', verbose=1, patience=7)
-        history = model.fit(X_train, y_train, epochs=10, batch_size=16,
+        history = model.fit(X_train, y_train, epochs=1, batch_size=16,
                             verbose=1, validation_data=(X_val, y_val), callbacks=[save_callback, early_stopping])
         # convertingt the accuracy of the model to a graph.
         # the dictionary that has the information on loss and accuracy per epoch
@@ -223,7 +263,7 @@ class ModelClass():
         Output: Dataframe name.
         '''
 #        df["Vehicle_combination_cat"] = df["Vehicle_combination"].astype("category").cat.codes
-        df["Location_cat"] = df["Location"].astype("category").cat.codes
+        #df["Location_cat"] = df["Location"].astype("category").cat.codes
 
         drop_columns_list = ['Vehicle_ID', 'Frame_ID', 'Global_Time', 'Local_X', 'Global_X', 'Global_Y', 'v_length', 'Lane_ID', 'Preceding', 'Space_Headway',
                              'Time_Headway', 'v_Class_Name', 'lane_changes', 'preceding_car_lane_changes', 'Prec_Vehicle_ID', 'Vehicle_combination', 'Preceding_Vehicle_Class', 'Relative_Time']
@@ -268,7 +308,7 @@ class ModelClass():
 
     def feature_selection(self, train_df, val_df, test_df):
         features = ['Rear_to_Front_Space_Headway', 'preceding_v_Class', "v_Class",
-                    'Velocity Difference_Following-Preceding', 'v_Vel', 'Location_cat']
+                    'Velocity Difference_Following-Preceding', 'v_Vel']
         X_train = train_df[features]
         X_val = val_df[features]
         X_test = test_df[features]
@@ -282,19 +322,10 @@ class ModelClass():
         # X_test = scaler.transform(X_test)
 
         return X_train, y_train, X_val, y_val, X_test, y_test
-    '''features:
-    'Rear_to_Front_Space_Headway',
-    'preceding_v_Class',
-    "v_Class",
-    'Velocity Difference_Following-Preceding',
-    'v_Vel',
-    'Location_cat']]
-    predicted_data = prediction(
-        test_df, predict_on_pair, target_variable, model,0.1)
-    '''
 
     def prediction(self, test_df, test_range, target_variable, model, time_frame):
-        time_frame = 0.1
+
+        delta_time = 0.1
         predicted_df = []
         # this loop runs for each pair required predictions.
         for current_pair in test_range:
@@ -307,7 +338,7 @@ class ModelClass():
             dv = np.zeros(input_df.shape[0])
             vel = np.zeros(input_df.shape[0])
             pred_acc = np.zeros(input_df.shape[0])
-
+            s_subject = np.zeros(input_df.shape[0])
             # updating the values for first Predictions
             vel[0] = input_df.iloc[0]['v_Vel']
             spacing[0] = input_df.iloc[0]['Rear_to_Front_Space_Headway']
@@ -319,54 +350,57 @@ class ModelClass():
             preceding_vehicle_class = input_df.iloc[0]['preceding_v_Class']
             vehicle_class = input_df.iloc[0]['v_Class']
             length_preceding_vehicle = input_df.iloc[0]['preceding_vehicle_length']
-            location = input_df.iloc[0]['Location_cat']
+            #location = input_df.iloc[0]['Location_cat']
 
             predict_for_input = np.array(
-                [spacing[0], preceding_vehicle_class, vehicle_class, dv[0], vel[0], location]).reshape(1, -1)
+                [spacing[0], preceding_vehicle_class, vehicle_class, dv[0], vel[0]]).reshape(1, -1)
             pred_acc[0] = model.predict(predict_for_input)
             print(
                 f"j: {0} input:{predict_for_input},subject localy:{local_y_subject[0]},preceding_local_y:{local_y_preceding[0]},spacing:{spacing[0]} pred_acc: {pred_acc[0]}")
-            vel[1] = vel[0]+(pred_acc[0]*delta_time)
-
+            vel[1] = vel[0]+(pred_acc[0] * delta_time)
+            if vel[1] < 0:
+                vel[1] = 0
 
             dv[1] = vel[1] - input_df.iloc[1]['preceding_Vehicle_Velocity']
 
-            s_subject[0] = ((vel[0]*delta_time ) +
+            s_subject[0] = ((vel[0] * delta_time) +
                             (0.5*pred_acc[0]*pow(delta_time, 2)))
-                            #should be 1  second here
+            # should be 1  second here
             print(f"row 0=s_subject:{s_subject[0]}")
             local_y_subject[1] = local_y_subject[0] + s_subject[0]
-            local_y_preceding[1] = input_df.iloc[1]['preceding_Local_Y'] 
+            local_y_preceding[1] = input_df.iloc[1]['preceding_Local_Y']
 
             spacing[1] = local_y_preceding[1] - \
                 local_y_subject[1] - length_preceding_vehicle
 
             for j in range(1, len(input_df)):
                 predict_for_input = np.array(
-                    [spacing[j], preceding_vehicle_class, vehicle_class, dv[j], vel[j], location]).reshape(1, -1)
-                
+                    [spacing[j], preceding_vehicle_class, vehicle_class, dv[j], vel[j]]).reshape(1, -1)
+
                 pred_acc[j] = model.predict(predict_for_input)
                 if j == len(input_df)-1:
                     break
-                
+
                 vel[j+1] = vel[j]+(pred_acc[j]*0.1)
 
+                if vel[j+1]:
+                    vel[j+1] = 0
 
-                dv[j+1] = vel[j+1] - input_df.iloc[j+1]['preceding_Vehicle_Velocity']
-
+                dv[j+1] = vel[j+1] - input_df.iloc[j +
+                                                   1]['preceding_Vehicle_Velocity']
 
                 s_subject[j] = ((vel[j]*0.1) +
                                 (0.5*pred_acc[j]*pow(0.1, 2)))
-                                
 
-                
                 local_y_subject[j+1] = local_y_subject[j] + s_subject[j]
-                local_y_preceding[j+1] = input_df.iloc[j+1]['preceding_Local_Y']
+                local_y_preceding[j+1] = input_df.iloc[j +
+                                                       1]['preceding_Local_Y']
 
                 spacing[j+1] = local_y_preceding[j+1] - \
                     local_y_subject[j+1] - length_preceding_vehicle
 
-                print(f"j: {j} input:{predict_for_input},subject localy:{local_y_subject[j]},preceding_local_y:{local_y_preceding[j]},spacing:{spacing[j]} pred_acc: {pred_acc[j]}")
+                print(
+                    f"j: {j} input:{predict_for_input},subject localy:{local_y_subject[j]},preceding_local_y:{local_y_preceding[j]},spacing:{spacing[j]} pred_acc: {pred_acc[j]}")
 
             print(f"input_df shape: {input_df.shape}")
             print(f"pred_acc shape: {pred_acc.shape}")
@@ -374,9 +408,9 @@ class ModelClass():
             input_df['predicted_velocity'] = vel
             input_df['predicted_Local_Y'] = local_y_subject
             input_df['predicted_spacing'] = spacing
-            input_df['preceding_Local_Y_used']=local_y_preceding
-            input_df['s_subject']=s_subject
-                        
+            input_df['preceding_Local_Y_used'] = local_y_preceding
+            input_df['s_subject'] = s_subject
+
             predicted_df.append(input_df)
             result = pd.concat(predicted_df)
         return result
