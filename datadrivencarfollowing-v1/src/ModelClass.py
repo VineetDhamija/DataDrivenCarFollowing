@@ -59,6 +59,32 @@ class ModelClass():
 
         return df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test, predicted_data, model
 
+    def fit_and_run_lstm(self, df, time_frame):
+        shift_instance = time_frame*10
+        df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test = self.preprocessing(
+            df, shift_instance)
+        model = self.define_lstm(X_train)
+        model = self.fit_lstm(model, X_train, y_train,
+                              X_val, y_val, time_frame)
+        predict_on_pair = self.prediction_test_pairs(test_df, 10, 12)
+        predict_on_pair[0]
+        print(f"Prediction being done on :{predict_on_pair[0]}")
+        target_variable = 'nextframeAcc'
+
+        predicted_data = self.prediction(
+            test_df, predict_on_pair, target_variable, model, time_frame)
+        prediction_1 = predicted_data[predicted_data["L-F_Pair"]
+                                      == predict_on_pair[0]]
+
+        self.plot_prediction(prediction_1, 'pair_Time_Duration',
+                             'predicted_acceleration', 'nextframeAcc', 'Acceleration', time_frame)
+        self.plot_prediction(prediction_1, 'pair_Time_Duration',
+                             'predicted_velocity', 'nextframesvel', 'Velocity', time_frame)
+        self.plot_prediction(prediction_1, 'pair_Time_Duration',
+                             'predicted_spacing', 'nextFrameSpacing', 'Spacing', time_frame)
+
+        return df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test, predicted_data, model
+
     def fit_and_run_random_forest(self, df, time_frame):
         shift_instance = time_frame*10
         df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test = self.preprocessing(
@@ -136,11 +162,88 @@ class ModelClass():
         outputs = layers.Dense(1, activation="elu")(x)
 
         model = keras.Model(inputs=input, outputs=outputs)
+        '''
         model.compile(optimizer='adam',
                       loss='mean_squared_error',
                       metrics=['accuracy'])
+        '''
+        model.compile(optimizer="adam",
+                      loss="binary_crossentropy",
+                      metrics=["accuracy"])
         model.summary()
 
+        return model
+
+    def define_lstm(self, input_df):
+
+        # input = keras.Input(shape=(18,))
+        input_df = tensorflow.expand_dims(input_df, axis=-1)
+
+        #input = keras.Input(shape=(input_df.shape[1], ))
+
+        input = keras.Input(shape=(input_df.shape[1], ), dtype="float64")
+        x = layers.Bidirectional(layers.LSTM(
+            128, return_sequences=True))(input)
+        x = layers.MaxPooling1D()(x)
+        x = layers.Bidirectional(layers.LSTM(64))(x)
+        x = layers.Dropout(0.5)(x)
+
+        outputs = layers.Dense(1, activation="elu")(x)
+
+        model = keras.Model(input, outputs)
+
+        model.compile(optimizer="adam",
+                      loss="binary_crossentropy",
+                      metrics=["accuracy"])
+
+        x = layers.LSTM(128, activation='elu', use_bias=True,
+                        dropout=0.2, return_state=True)(input)
+        x = layers.LSTM(128, activation='elu', use_bias=True,
+                        dropout=0.2, return_state=True)(x)
+
+        model.summary()
+
+        return model
+
+    def fit_lstm(self, model, X_train, y_train, X_val, y_val, reaction_time):
+        modelName = "lstm_model" + str(reaction_time) + ".keras"
+        save_callback = keras.callbacks.ModelCheckpoint(
+            modelName, save_best_only=True)
+        early_stopping = keras.callbacks.EarlyStopping(
+            monitor='val_accuracy', verbose=1, patience=7)
+        history = model.fit(X_train, y_train, epochs=1, batch_size=16,
+                            verbose=1, validation_data=(X_val, y_val), callbacks=[save_callback, early_stopping])
+        # convertingt the accuracy of the model to a graph.
+        # the dictionary that has the information on loss and accuracy per epoch
+        history_dict = history.history
+
+        loss_values = history_dict['loss']   # training loss
+        val_loss_values = history_dict['val_loss']  # validation loss
+
+        # creates list of integers to match the number of epochs of training
+        epochs = range(1, len(loss_values)+1)
+
+        # code to plot the results
+        plt.plot(epochs, loss_values, 'b', label="Training Loss")
+        plt.plot(epochs, val_loss_values, 'r', label="Validation Loss")
+        plt.title("Training and Validation Loss")
+        plt.xlabel("Epochs")
+        plt.xticks(epochs)
+        plt.ylabel("Loss")
+        plt.legend()
+        plt.show()
+        # As above, but this time we want to visualize the training and validation accuracy
+        acc_values = history_dict['accuracy']
+        val_acc_values = history_dict['val_accuracy']
+
+        plt.plot(epochs, acc_values, 'b', label="Training Accuracy")
+        plt.plot(epochs, val_acc_values, 'r', label="Validation Accuracy")
+        plt.title("Training and Validation Accuracy")
+        plt.xlabel("Epochs")
+        plt.xticks(epochs)
+        plt.ylabel("Accuracy")
+        plt.legend()
+        plt.show()
         return model
 
     '''
@@ -412,5 +515,6 @@ class ModelClass():
             input_df['s_subject'] = s_subject
 
             predicted_df.append(input_df)
-            result = pd.concat(predicted_df)
+
+        result = pd.concat(predicted_df)
         return result
