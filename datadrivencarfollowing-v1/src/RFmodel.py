@@ -92,8 +92,8 @@ class ModelClass():
 
             local_y_subject[0] = input_df.iloc[0]['Local_Y']
             local_y_preceding[0] = input_df.iloc[0]['preceding_Local_Y']
-            preceding_vehicle_class = input_df.iloc[0]['Preceding_Vehicle_Class']
-            vehicle_class = input_df.iloc[0]['v_Class']
+            preceding_vehicle_class = input_df.iloc[0]['PrecVehType']
+            vehicle_class = input_df.iloc[0]['Vehicle.type']
             length_preceding_vehicle = input_df.iloc[0]['preceding_vehicle_length']
 
             predict_for_input = np.array(

@@ -44,7 +44,8 @@ class FileProcessing():
             df
         '''
         df = pd.concat([df1, df2])
-        
-        print(f" Merged Record Count:{df.shape[0]}, df1:{df1.shape[0]}, df2:{df2.shape[0]}")
+
+        print(
+            f" Merged Record Count:{df.shape[0]}, df1:{df1.shape[0]}, df2:{df2.shape[0]}")
 
         return df

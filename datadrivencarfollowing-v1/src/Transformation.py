@@ -226,5 +226,24 @@ class Transformation():
              as_index=False).max(['pair_Time_Duration']))
         dict_lenght = dict(zip(x['L-F_Pair'], x['pair_Time_Duration']))
         df["total_pair_duration"] = df["L-F_Pair"].map(dict_lenght)
-        # print(df["total_pair_duration"].dtype)
+
+        return df
+
+    def remap_pair_time(self, df):
+        '''
+        Map the Pairs for the Preceding and lead vehicle. 
+        Input: 
+            df
+        Ouptut: 
+            df
+        '''
+        df = df.sort_values(by=['Global_Time'],
+                            ascending=True, ignore_index=True)
+        df['pair_Time_Duration'] = (df.groupby(
+            ['L-F_Pair'], as_index=False).cumcount()*0.1)
+        x = (df[['L-F_Pair', 'pair_Time_Duration']].groupby(['L-F_Pair'],
+             as_index=False).max(['pair_Time_Duration']))
+        dict_lenght = dict(zip(x['L-F_Pair'], x['pair_Time_Duration']))
+        df["total_pair_dur"] = df["L-F_Pair"].map(dict_lenght)
+
         return df
