@@ -145,7 +145,7 @@ class ModelClass():
             predicted_df.append(input_df)
             result = pd.concat(predicted_df)
             #r.append(r2_score(Q[target_variable], Q['pacc']))
-            return result
+        return result
 
     def plot_1(self, df, nextframe, prediction, title):
         plt.figure(figsize=(10, 8))
