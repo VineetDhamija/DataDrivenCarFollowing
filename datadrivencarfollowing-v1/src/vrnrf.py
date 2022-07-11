@@ -24,11 +24,8 @@ class ModelClass():
             ["L-F_Pair"], as_index=False)["Local_Y"].shift(-10*time_frame)
         df['pair_Time_Duration'] = (df.groupby(
             ['L-F_Pair'], as_index=False).cumcount()*0.1) + 0.1
-        df['Preceding_Vehicle_Class'] = df['Preceding_Vehicle_Class'].map(
-            {'Motorcycle': 1, 'Car': 2, 'Heavy Vehicle': 3, 'Free Flow': 4})
-        df['v_Class'] = df['v_Class'].map(
-            {'Motorcycle': 1, 'Car': 2, 'Heavy Vehicle': 3})
-        df = df[df["Preceding_Vehicle_Class"].notna()]
+        df['preceding_v_Class'] = df['preceding_v_Class']
+        df['v_Class'] = df['v_Class']
         df = df[df["v_Vel"].notna()]
         df = df[df["Rear_to_Front_Space_Headway"].notna()]
         df = df[df["Local_Y"].notna()]
@@ -36,8 +33,7 @@ class ModelClass():
         df = df[df["pair_Time_Duration"].notna()]
         df = df[df["nextframeposition"].notna()]
         df = df[df["nextframesvel"].notna()]
-        df = df[df["Preceding_Vehicle_Class"].notna()]
-        df = df[df["Vehicle.type"].notna()]
+        df = df[df["preceding_v_Class"].notna()]
         return df
 
     def select_training_pairs(self, df):
@@ -55,10 +51,10 @@ class ModelClass():
         return train, test
 
     def fit_rfmodel(self, train, test, number_of_estimators):
-        X_train = train[["Rear_to_Front_Space_Headway", 'Preceding_Vehicle_Class',
+        X_train = train[["Rear_to_Front_Space_Headway", 'preceding_v_Class',
                          'v_Class', 'Velocity Difference_Following-Preceding', 'v_Vel']]
         y_train = train['nextframeAcc']
-        X_test = test[["Rear_to_Front_Space_Headway", 'Preceding_Vehicle_Class',
+        X_test = test[["Rear_to_Front_Space_Headway", 'preceding_v_Class',
                        'v_Class', 'Velocity Difference_Following-Preceding', 'v_Vel']]
         y_test = test['nextframeAcc']
         rf = RandomForestRegressor(
@@ -92,12 +88,12 @@ class ModelClass():
 
             local_y_subject[0] = input_df.iloc[0]['Local_Y']
             local_y_preceding[0] = input_df.iloc[0]['preceding_Local_Y']
-            preceding_vehicle_class = input_df.iloc[0]['Preceding_Vehicle_Class']
+            preceding_v_Class = input_df.iloc[0]['preceding_v_Class']
             vehicle_class = input_df.iloc[0]['v_Class']
             length_preceding_vehicle = input_df.iloc[0]['preceding_vehicle_length']
 
             predict_for_input = np.array(
-                [spacing[0], preceding_vehicle_class, vehicle_class, dv[0], vel[0]]).reshape(1, -1)
+                [spacing[0], preceding_v_Class, vehicle_class, dv[0], vel[0]]).reshape(1, -1)
             pred_acc[0] = rf.predict(predict_for_input)
             # print(
             #   f"j: {0} input:{predict_for_input},subject localy:{local_y_subject[0]},preceding_local_y:{local_y_preceding[0]},spacing:{spacing[0]} pred_acc: {pred_acc[0]}")
@@ -117,7 +113,7 @@ class ModelClass():
 
             for j in range(1, len(input_df)):
                 predict_for_input = np.array(
-                    [spacing[j], preceding_vehicle_class, vehicle_class, dv[j], vel[j]]).reshape(1, -1)
+                    [spacing[j], preceding_v_Class, vehicle_class, dv[j], vel[j]]).reshape(1, -1)
 
                 pred_acc[j] = rf.predict(predict_for_input)
                 if j == len(input_df)-1:
