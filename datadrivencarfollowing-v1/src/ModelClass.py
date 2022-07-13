@@ -14,7 +14,7 @@ import numpy as np
 import pickle
 import joblib
 import FileProcessing
-import ModelClass
+
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -463,7 +463,6 @@ class ModelClass():
         print(f"rmse: {rmse}")
         prediction_1 = predicted_data[predicted_data["L-F_Pair"]
                                       == predict_on_pair[0]]
-        model_obj = ModelClass.ModelClass()
-        model_obj.display_display_prediction_plots(
+        self.display_display_prediction_plots(
             prediction_1, delta_time, model_name)
         return r_square, rmse
