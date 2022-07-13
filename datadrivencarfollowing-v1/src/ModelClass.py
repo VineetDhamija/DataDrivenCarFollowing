@@ -1,22 +1,20 @@
-from asyncio.windows_events import NULL
 from tensorflow.keras import layers
 from tensorflow import keras
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Flatten, Dense, Dropout, MaxPooling2D
+#from tensorflow.keras.models import Sequential
+#from tensorflow.keras.layers import Flatten, Dense, Dropout, MaxPooling2D
 import tensorflow
-from sklearn.metrics import mean_absolute_error, r2_score
+from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.neighbors import KNeighborsRegressor
-from pathlib import Path
 import random
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-import RFmodel
 import pickle
 import joblib
-
+import FileProcessing
+import ModelClass
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -27,7 +25,6 @@ class ModelClass():
     '''
 
     '''
-    saved_pairs = []
 
     def fit_and_run_neural(self, df, time_frame):
         shift_instance = time_frame*10
@@ -45,18 +42,21 @@ class ModelClass():
             test_df, predict_on_pair, target_variable, model, time_frame)
         prediction_1 = predicted_data[predicted_data["L-F_Pair"]
                                       == predict_on_pair[0]]
+        self.display_prediction_plots(prediction_1, time_frame, 'CNN ')
 
+        '''
+        #        self.display_prediction_plots(prediction_1, delta_time, 
         self.plot_prediction(prediction_1, 'pair_Time_Duration',
-                             'predicted_acceleration', 'nextframeAcc', 'Acceleration', time_frame, 'CNN')
+                             'predicted_acceleration', 'nextframeAcc', 'Acceleration', time_frame, )
         self.plot_prediction(prediction_1, 'pair_Time_Duration',
                              'predicted_velocity', 'nextframesvel', 'Velocity', time_frame, 'CNN')
         self.plot_prediction(prediction_1, 'pair_Time_Duration',
                              'predicted_spacing', 'nextFrameSpacing', 'Spacing', time_frame, 'CNN')
-
+        '''
         return df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test, predicted_data, model
 
     def preprocessing(self, input_df, time_frame, neural=False):
-        input_df = self.create_prediction_pair(input_df, time_frame)
+        input_df = self.create_prediction_columns(input_df, time_frame)
         if neural:
             train_df, val_df, test_df = self.test_train_pairs(input_df, 0.9)
         else:
@@ -106,7 +106,7 @@ class ModelClass():
 
         return X_train, y_train, X_val, y_val, X_test, y_test
 
-    def create_prediction_pair(self, df, n):
+    def create_prediction_columns(self, df, n):
         '''
         create the prediction pair by shifting the actual data up by the mentioned number(0.1*n seconds) to create the timeseries info
         '''
@@ -137,7 +137,7 @@ class ModelClass():
         Output: Dataframe name.
         '''
         drop_columns_list = ['Vehicle_ID', 'Frame_ID', 'Global_Time', 'Local_X', 'Global_X', 'Global_Y', 'v_length', 'Lane_ID', 'Preceding', 'Space_Headway',
-                             'Time_Headway', 'v_Class_Name', 'lane_changes', 'preceding_car_lane_changes', 'Prec_Vehicle_ID', 'Vehicle_combination', 'Preceding_Vehicle_Class', 'Relative_Time']
+                             'Time_Headway', 'v_Class_Name', 'lane_changes', 'preceding_car_lane_changes', 'Prec_Vehicle_ID', 'Preceding_Vehicle_Class', 'Relative_Time', 'total_pair_duration', 'total_pair_dur', 'diference', 'Front_To_Rear_Time_Headway']
         df["Front_To_Rear_Time_Headway"] = df["Front_To_Rear_Time_Headway"].replace(
             np.inf, 999)
         df[df.select_dtypes(np.float64).columns] = df.select_dtypes(
@@ -145,10 +145,16 @@ class ModelClass():
         df = df.drop(drop_columns_list, axis=1, errors='ignore')
         return df
 
-    def prediction_test_pairs(self, df, pair_from, pair_to):
+    def prediction_test_pairs(self, df, pair_from, pair_to, vehicle_combination=''):
+        if vehicle_combination > '':
+            df = df[(df['Vehicle_combination'] == vehicle_combination)]
         unique_pairs_values = df['L-F_Pair'].unique()
         unique_pairs_list = unique_pairs_values.tolist()
-        unique_pairs_df = unique_pairs_list[pair_from:pair_to]
+        if pair_to == 9999:
+            unique_pairs_df = unique_pairs_list
+        else:
+            unique_pairs_df = unique_pairs_list[pair_from:pair_to]
+
         return unique_pairs_df
 
     def define_neural_network(self, input_df):
@@ -264,13 +270,15 @@ class ModelClass():
             test_df, predict_on_pair, target_variable, model, delta_time)
         prediction_1 = predicted_data[predicted_data["L-F_Pair"]
                                       == predict_on_pair[0]]
+        self.display_prediction_plots(prediction_1, delta_time, 'KNN ')
+        '''
         self.plot_prediction(prediction_1, 'pair_Time_Duration',
                              'predicted_acceleration', 'nextframeAcc', 'Acceleration', delta_time, 'KNN')
         self.plot_prediction(prediction_1, 'pair_Time_Duration',
                              'predicted_velocity', 'nextframesvel', 'Velocity', delta_time, 'KNN')
         self.plot_prediction(prediction_1, 'pair_Time_Duration',
                              'predicted_spacing', 'nextFrameSpacing', 'Spacing', delta_time, 'KNN')
-
+        '''
         return df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test, predicted_data, model
 
     def define_fit_KNN(self, X_train, y_train):
@@ -297,13 +305,16 @@ class ModelClass():
             test_df, predict_on_pair, target_variable, model, delta_time)
         prediction_1 = predicted_data[predicted_data["L-F_Pair"]
                                       == predict_on_pair[0]]
+        self.display_prediction_plots(
+            prediction_1, delta_time, 'Random Forest ')
+        '''
         self.plot_prediction(prediction_1, 'pair_Time_Duration',
                              'predicted_acceleration', 'nextframeAcc', 'Acceleration', delta_time, 'Random Forest')
         self.plot_prediction(prediction_1, 'pair_Time_Duration',
                              'predicted_velocity', 'nextframesvel', 'Velocity', delta_time, 'Random Forest')
         self.plot_prediction(prediction_1, 'pair_Time_Duration',
                              'predicted_spacing', 'nextFrameSpacing', 'Spacing', delta_time, 'Random Forest')
-
+        '''
         return df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test, predicted_data, model
 
     def define_fit_RF(self, X_train, y_train, number_of_estimators):
@@ -317,11 +328,11 @@ class ModelClass():
 
         delta_time = 0.1
         predicted_df = []
-        input_df = pd.DataFrame()
+
         # this loop runs for each pair required predictions.
         for current_pair in test_range:
             # Assign shape of the predictions
-            #input_df = []
+            input_df = []
             input_df = test_df[test_df['L-F_Pair'] == current_pair]
             spacing = np.zeros(input_df.shape[0])
             local_y_subject = np.zeros(input_df.shape[0])
@@ -402,3 +413,57 @@ class ModelClass():
 
         result = pd.concat(predicted_df)
         return result
+
+    def prediction_preprocessing(self, df, time_frame):
+        shift_instance = time_frame*10
+        df = self.create_prediction_columns(df, shift_instance)
+
+        return df
+
+    def display_display_prediction_plots(self, prediction, delta_time, modelname):
+
+        self.plot_prediction(prediction, 'pair_Time_Duration',
+                             'predicted_acceleration', 'nextframeAcc', 'Acceleration', delta_time, modelname)
+        self.plot_prediction(prediction, 'pair_Time_Duration',
+                             'predicted_velocity', 'nextframesvel', 'Velocity', delta_time, modelname)
+        self.plot_prediction(prediction, 'pair_Time_Duration',
+                             'predicted_spacing', 'nextFrameSpacing', 'Spacing', delta_time, modelname)
+        return None
+
+    def accuracy(self, df, actual, predicted):
+        R2_score = r2_score(df[actual], df[predicted])
+        RMSE = np.sqrt(mean_squared_error(df[actual], df[predicted]))
+        return R2_score, RMSE
+
+    def predict_test_dataset(self, file_name, delta_time, model_name):
+        string_delta_time = str(delta_time).replace('.', '_')
+        file_name = file_name + string_delta_time
+        print(
+            f"Running test Set on :{file_name}, Reaction Time {delta_time} for Model: {model_name}")
+        file = FileProcessing.FileProcessing()
+        trajectory_display = file.read_input(file_name)
+        target_variable = 'nextframeAcc'
+        if model_name == 'neural_network_model':
+            model = file.read_model(model_name, delta_time, neural=True)
+        else:
+            model = file.read_model(model_name, delta_time)
+        predict_data = self.prediction_preprocessing(
+            trajectory_display, delta_time)
+        predict_on_pair = self.prediction_test_pairs(predict_data, 0, 9999)
+        print(
+            f"Total number of unique Pairs in Test Dataset: {len(predict_on_pair)}")
+        predicted_data = self.prediction(
+            predict_data, predict_on_pair, target_variable, model, delta_time)
+        # predicted_data.columns
+        r_square, rmse = self.accuracy(
+            predicted_data, 'nextframeAcc', 'predicted_acceleration')
+        print(f"\n")
+        print(f"{model_name}, Reaction Time:{delta_time} Statistics Below:")
+        print(f"r_square: {r_square}")
+        print(f"rmse: {rmse}")
+        prediction_1 = predicted_data[predicted_data["L-F_Pair"]
+                                      == predict_on_pair[0]]
+        model_obj = ModelClass.ModelClass()
+        model_obj.display_display_prediction_plots(
+            prediction_1, delta_time, model_name)
+        return r_square, rmse
