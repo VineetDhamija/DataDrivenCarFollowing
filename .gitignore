@@ -149,3 +149,8 @@ datadrivencarfollowing-v1/src/clean/reaction0.1/~$r.xlsx
 i80rfMODEL1.py
 datadrivencarfollowing-v1/src/clean/I80_1st15minutes_complete.rds
 datadrivencarfollowing-v1/scripts/df.csv
+datadrivencarfollowing-v1/scripts/knn0.1.pkg
+datadrivencarfollowing-v1/scripts/randomForest5.joblib
+datadrivencarfollowing-v1/scripts/randomForest5.pkg
+datadrivencarfollowing-v1/scripts/randomForest10.joblib
+datadrivencarfollowing-v1/scripts/randomForest10.pkg
