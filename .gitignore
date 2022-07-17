@@ -6,8 +6,13 @@ __pycache__/
 # C extensions
 *.so
 
+
 # Distribution / packaging
 .Python
+
+# saved Models
+.pkg
+.joblib
 
 build/
 develop-eggs/
@@ -156,3 +161,4 @@ datadrivencarfollowing-v1/scripts/randomForest10.joblib
 datadrivencarfollowing-v1/scripts/randomForest10.pkg
 datadrivencarfollowing-v1/scripts/randomForest0.1.pkg
 datadrivencarfollowing-v1/scripts/randomForest0.1.joblib
+datadrivencarfollowing-v1/scripts/EDA/randomForest0.1.joblib

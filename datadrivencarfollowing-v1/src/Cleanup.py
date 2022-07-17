@@ -27,7 +27,12 @@ class Cleanup():
 
     def filter_records_for_model(self, df):
         '''
-        Map the Pairs for the Preceding and lead vehicle.
+        Filter vehicle information based on the filteration criterias identified:
+        1. Remove all Vehicles which have bad Vehicle Length and Type. i.e. same vehicle having two vehicle Types in different pair information.
+        2. Remove first 5 seconds for a Pair when Lead Vehicle is overtaking. Last 5 from the pair which the vehicle is leaving(same vehicle was Subject in that scneario).
+        3. Remove Lane 4 and above as they are shoulders/ramps and exits. 
+        4. Remove trajectories which are less than 30 seconds. 
+
         Input:
             df
         Ouptut:
@@ -56,7 +61,7 @@ class Cleanup():
         both_lane_change_3 = df[(df['L-F_Pair'].isin(lf_pair_remove_first_last_5_seconds_lane3)) & (df['Lane_ID'] == 3) &
                                 ((df['pair_Time_Duration'] < 5) | (df['pair_Time_Duration'] > (df['total_pair_duration'] - 5)))]
 
-        time_headway_less_than5 = df[(df['Time_Headway'] > 5)]
+        time_headway_less_than5 = df[(df['Time_Headway'] > 10)]
         remove_ramp_data = df[(df['Lane_ID'] >= 4)]
 
         total_duration_less_than_minute = df[(
@@ -83,10 +88,13 @@ class Cleanup():
         remove = pd.concat(
             [time_headway_less_than5, total_duration_less_than_minute, bad_v_Class_length, both_lane_change_1, both_lane_change_2, both_lane_change_3, remove_ramp_data])
 
-        df = df.drop(remove.index,axis=0)
+        df = df.drop(remove.index, axis=0)
         after = df.shape[0]
         removed_row_count = before - after
         print(f"{loc}: {removed_row_count} rows removed using above criterias")
+        df.drop(columns=['pair_Time_Duration'], axis=1, inplace=True)
+        df.drop(columns=['Prec_Vehicle_ID'], axis=1, inplace=True)
+        df.drop(columns=['prevsecAcc'], axis=1, inplace=True)
 
         return df
 
@@ -104,7 +112,7 @@ class Cleanup():
             lf_pair_remove_first_5_seconds_lane3_f)
 
         return lf_pair_remove_first_last_5_seconds_lane1,    lf_pair_remove_first_last_5_seconds_lane2,    lf_pair_remove_first_last_5_seconds_lane3
-    
+
     def preceding_lane_change_data(self, df):
         lane_verify = df[['Vehicle_ID', 'Lane_ID', 'Preceding']]
         #print(f"{lane_verify.duplicated().sum()} duplicate values have been removed")
@@ -125,7 +133,6 @@ class Cleanup():
             lane_verify_3)
         return lf_pair_remove_first_5_seconds_lane1,    lf_pair_remove_first_5_seconds_lane2,    lf_pair_remove_first_5_seconds_lane3
 
-    
     def following_lane_change_data(self, df):
         lane_verify = df[['Vehicle_ID', 'Lane_ID', 'Following']]
         #print(f"{lane_verify.duplicated().sum()} duplicate values have been removed")

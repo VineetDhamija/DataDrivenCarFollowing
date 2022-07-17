@@ -1,5 +1,6 @@
 import numpy as np
-#import pandas as pd
+# import pandas as pd ip
+import random
 
 
 class Transformation():
@@ -125,7 +126,7 @@ class Transformation():
 
     def preceding_vehicle_length(self, df):
         '''
-        Find and populate the preceding Vehicle Length Name into preceding_vehicle_length column. If there is no Preceding vehicle, it will be populated with 0 in case of Vehicle ID 0
+        Find and populate the preceding Vehicle Length into preceding_vehicle_length column. If there is no Preceding vehicle, it will be populated with 0 in case of Vehicle ID 0
         Input: 
             df
         Ouptut: 
@@ -183,10 +184,6 @@ class Transformation():
             lane_verify[lane_verify["Lane_ID"] > 1]['Vehicle_ID'])
         df['lane_changes'] = df['Vehicle_ID'].isin(
             lane_change_vehicles)
-        print(
-            f"{df['Location'].iloc[0]}::{df[(df['lane_changes'] == False) ]['Vehicle_ID'].unique().size} cars dont change lanes")
-        print(
-            f"{df['Location'].iloc[0]}::{df[(df['lane_changes'] == True) ]['Vehicle_ID'].unique().size} cars Change lanes")
         right_df = df[['Vehicle_ID', 'Global_Time',
                        'v_Vel', 'v_Acc', 'lane_changes', 'Local_Y', 'v_Class']]
         right_df.rename(columns={'Vehicle_ID': 'Prec_Vehicle_ID', 'v_Vel': 'preceding_Vehicle_Velocity',
@@ -207,10 +204,13 @@ class Transformation():
             df['preceding_Vehicle_Velocity']
         df['Acceleration Difference_Following-Preceding'] = df['v_Acc'] - \
             df['preceding_Vehicle_Acceleration']
+        df["prevsecAcc"] = df.groupby(
+            ["L-F_Pair"], as_index=False)["v_Acc"].shift(+1)
+        df["jerk"] = (df["v_Acc"] - df["prevsecAcc"]) / 0.1
 
         return df
 
-    def map_pairs(self, df):
+    def time_pairs(self, df):
         '''
         Map the Pairs for the Preceding and lead vehicle. 
         Input: 
@@ -247,3 +247,30 @@ class Transformation():
         df["total_pair_dur"] = df["L-F_Pair"].map(dict_lenght)
 
         return df
+
+    def train_test_pair(self, df, split, neural=False, seed=0):
+        '''
+        Read the input file into a dataframe.
+        Input: File name for the file present in Data folder.
+        Output: Dataframe name.
+        '''
+
+        if seed > 0:
+            random.seed(seed)
+
+        total_pairs = df["L-F_Pair"].unique()
+        total_pairs = total_pairs.tolist()
+        test_split_cnt = round(len(total_pairs)*split)
+        test_split_pairs = random.sample(total_pairs, test_split_cnt)
+        train_df = df[df['L-F_Pair'].isin(test_split_pairs)]
+        test_df = df[~df['L-F_Pair'].isin(test_split_pairs)]
+        if neural:
+            validation_split_cnt = round(test_split_cnt*0.1)
+        else:
+            validation_split_cnt = round(test_split_cnt*0.0)
+
+        validation_split_pairs = random.sample(
+            test_split_pairs, validation_split_cnt)
+        val_df = df[df['L-F_Pair'].isin(validation_split_pairs)]
+        train_df = df[~df['L-F_Pair'].isin(validation_split_pairs)]
+        return train_df, val_df, test_df
