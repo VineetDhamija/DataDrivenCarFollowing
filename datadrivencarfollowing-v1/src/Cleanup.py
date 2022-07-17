@@ -61,7 +61,11 @@ class Cleanup():
         both_lane_change_3 = df[(df['L-F_Pair'].isin(lf_pair_remove_first_last_5_seconds_lane3)) & (df['Lane_ID'] == 3) &
                                 ((df['pair_Time_Duration'] < 5) | (df['pair_Time_Duration'] > (df['total_pair_duration'] - 5)))]
 
+<<<<<<< HEAD
         time_headway_less_than5 = df[(df['Time_Headway'] > 10)]
+=======
+        time_headway_less_than5 = df[(df['Time_Headway'] > 500)]
+>>>>>>> f6dd85d3250397f4a78a0f9a66fe2a3fd890402d
         remove_ramp_data = df[(df['Lane_ID'] >= 4)]
 
         total_duration_less_than_minute = df[(
@@ -94,7 +98,10 @@ class Cleanup():
         print(f"{loc}: {removed_row_count} rows removed using above criterias")
         df.drop(columns=['pair_Time_Duration'], axis=1, inplace=True)
         df.drop(columns=['Prec_Vehicle_ID'], axis=1, inplace=True)
+<<<<<<< HEAD
         df.drop(columns=['prevsecAcc'], axis=1, inplace=True)
+=======
+>>>>>>> f6dd85d3250397f4a78a0f9a66fe2a3fd890402d
 
         return df
 

@@ -184,6 +184,13 @@ class Transformation():
             lane_verify[lane_verify["Lane_ID"] > 1]['Vehicle_ID'])
         df['lane_changes'] = df['Vehicle_ID'].isin(
             lane_change_vehicles)
+<<<<<<< HEAD
+=======
+        # print(
+        #    f"{df['Location'].iloc[0]}::{df[(df['lane_changes'] == False) ]['Vehicle_ID'].unique().size} cars dont change lanes")
+        # print(
+        #    f"{df['Location'].iloc[0]}::{df[(df['lane_changes'] == True) ]['Vehicle_ID'].unique().size} cars Change lanes")
+>>>>>>> f6dd85d3250397f4a78a0f9a66fe2a3fd890402d
         right_df = df[['Vehicle_ID', 'Global_Time',
                        'v_Vel', 'v_Acc', 'lane_changes', 'Local_Y', 'v_Class']]
         right_df.rename(columns={'Vehicle_ID': 'Prec_Vehicle_ID', 'v_Vel': 'preceding_Vehicle_Velocity',
@@ -265,7 +272,11 @@ class Transformation():
         train_df = df[df['L-F_Pair'].isin(test_split_pairs)]
         test_df = df[~df['L-F_Pair'].isin(test_split_pairs)]
         if neural:
+<<<<<<< HEAD
             validation_split_cnt = round(test_split_cnt*0.1)
+=======
+            validation_split_cnt = round(test_split_cnt*0.2)
+>>>>>>> f6dd85d3250397f4a78a0f9a66fe2a3fd890402d
         else:
             validation_split_cnt = round(test_split_cnt*0.0)
 

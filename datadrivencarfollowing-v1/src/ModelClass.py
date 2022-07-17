@@ -18,6 +18,27 @@ import FileProcessing
 import warnings
 warnings.filterwarnings("ignore")
 
+def fit_and_run_neural(self, df, time_frame):
+        shift_instance = time_frame*10
+        df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test = self.preprocessing(
+            df, shift_instance, True)
+        model = self.define_neural_network(X_train)
+        model = self.fit_neural_network(
+            model, X_train, y_train, X_val, y_val, time_frame)
+        predict_on_pair = self.prediction_test_pairs(test_df, 10, 12)
+        predict_on_pair[0]
+        print(f"Prediction being done on :{predict_on_pair[0]}")
+        target_variable = 'nextframeAcc'
+
+        predicted_data = self.prediction(
+            test_df, predict_on_pair, target_variable, model, time_frame)
+        prediction_1 = predicted_data[predicted_data["L-F_Pair"]
+                                      == predict_on_pair[0]]
+        self.display_prediction_plots(prediction_1, time_frame, 'CNN ')
+
+        return df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test, predicted_data, model
+
+    
 
 def fit_and_run_neural(self, df, time_frame):
     shift_instance = time_frame*10
@@ -65,7 +86,11 @@ class ModelClass():
                                       == predict_on_pair[0]]
         self.display_prediction_plots(prediction_1, time_frame, 'CNN ')
 
+<<<<<<< HEAD
         return train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test, predicted_data, model
+=======
+        return df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test, predicted_data, model
+>>>>>>> f6dd85d3250397f4a78a0f9a66fe2a3fd890402d
 
     def preprocessing(self, train_df,  test_df, time_frame, neural=False, val_df=[]):
 
@@ -172,8 +197,12 @@ class ModelClass():
 
         model.compile(optimizer="adam",
                       loss="mean_squared_error",
+<<<<<<< HEAD
                       metrics=[keras.metrics.RootMeanSquaredError()])
 
+=======
+                      metrics="mean_squared_error")
+>>>>>>> f6dd85d3250397f4a78a0f9a66fe2a3fd890402d
         model.summary()
 
         return model
@@ -257,7 +286,11 @@ class ModelClass():
                                       == predict_on_pair[0]]
         self.display_prediction_plots(prediction_1, delta_time, 'KNN ')
 
+<<<<<<< HEAD
         return train_df, test_df, X_train, y_train, X_test, y_test, predicted_data, model
+=======
+        return df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test, predicted_data, model
+>>>>>>> f6dd85d3250397f4a78a0f9a66fe2a3fd890402d
 
     def define_fit_KNN(self, X_train, y_train):
         model = KNeighborsRegressor(n_neighbors=5)
@@ -286,7 +319,11 @@ class ModelClass():
         self.display_prediction_plots(
             prediction_1, delta_time, 'Random Forest ')
 
+<<<<<<< HEAD
         return train_df, test_df, X_train, y_train, X_test, y_test, predicted_data, model
+=======
+        return df, train_df, val_df, test_df, X_train, y_train, X_val, y_val, X_test, y_test, predicted_data, model
+>>>>>>> f6dd85d3250397f4a78a0f9a66fe2a3fd890402d
 
     def define_fit_RF(self, X_train, y_train, number_of_estimators):
         model = RandomForestRegressor(
