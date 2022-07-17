@@ -463,6 +463,11 @@ class ModelClass():
                                       == predict_on_pair[0]]
         self.display_prediction_plots(
             prediction_1, delta_time, model_name)
+
+        predicted_data_file_name = model_name + '_' + \
+            'predicted_Test_Set_' + str(delta_time)
+        file.export_file(predicted_data, predicted_data_file_name)
+
         return r_square, rmse
 
     def predict_knn_rf_cnn(self, predict_data, predict_on_pair, delta_time):
@@ -504,7 +509,7 @@ class ModelClass():
         self.combined_predicted_plots(prediction_1, 'pair_Time_Duration', 'knn_predicted_spacing', 'rf_predicted_spacing', 'cnn_predicted_spacing',
                                       'nextFrameSpacing', 'Spacing', delta_time, '')
         self.combined_predicted_plots(prediction_1, 'pair_Time_Duration', 'knn_predicted_jerk', 'rf_predicted_jerk', 'cnn_predicted_jerk',
-                                      'nextFramejerk', 'Jerk', delta_time, '')
+                                      'nextframejerk', 'Jerk', delta_time, '')
         return None
 
     def combined_predicted_plots(self, df, col_x, predicted_y_knn, predicted_y_rf, predicted_y_cnn, actual_y, name, time_frame, modelname):
