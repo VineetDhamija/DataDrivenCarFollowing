@@ -237,7 +237,7 @@ ax.tick_params(left = False, bottom = False)
 
 
 
-plot_selection = st.sidebar.selectbox('Plot Selection',('Velocity', 'Acceleration', 'Jerk', 'Space', 'All'))
+plot_selection = st.sidebar.selectbox('Plot Selection',('All','Velocity', 'Acceleration', 'Jerk', 'Space'))
 
 if plot_selection == 'Velocity':
     st.plotly_chart(fig1)
