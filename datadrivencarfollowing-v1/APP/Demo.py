@@ -10,8 +10,8 @@ import seaborn as sns
 
 
 st.write("""
-# NGSIM Prediction App
-This app predicts the **acceleration, velocity, space, and jerk**
+# Single Lane Car-Following Trajectory Prediction
+This app predicts the **Acceleration and calculate trajectories (speed, Spacing, and jerk)**
 """)
 
 
@@ -56,8 +56,8 @@ df["Actual Spacing"] = df["nextFrameSpacing"]
 fig1, ax = plt.subplots()
 #fig1 = plt.figure(figsize = (16, 10))
 #plt.figure(figsize=(15, 9))
-plt.title("Actual Velocity vs predicted valocity",color = "green", size = 18)
-plt.xlabel("Time Duration (s)", color = "black", size = 18)
+plt.title("Actual Velocity vs Predicted Velocity",color = "green", size = 18)
+plt.xlabel("Pair Time Duration (s)", color = "black", size = 18)
 plt.ylabel("Velocity (m/s)", color = "black", size = 18)
 plt.xticks( range(0,60,5) )
 plt.rc('xtick', labelsize=15)
@@ -78,21 +78,21 @@ ax.tick_params(left = False, bottom = False)
 
 fig2, ax = plt.subplots()
 #fig2 = plt.figure(figsize = (16, 10))
-plt.title("Actual Space vs predicted Space",color = "gold", size = 18)
-plt.xlabel("Time Duration (s)", color = "black", size = 18)
-plt.ylabel("Space (m)", color = "black", size = 18)
+plt.title("Actual Spacing vs predicted Spacing",color = "gold", size = 18)
+plt.xlabel("Pair Time Duration (s)", color = "black", size = 18)
+plt.ylabel("Spacing (m)", color = "black", size = 18)
 plt.xticks( range(0,60,5) )
 plt.rc('xtick', labelsize=15)
 plt.rc('ytick', labelsize=15)
-sns.lineplot(x = df["Pair Time Duration"],y= df['Actual Spacing'],color="black")#,label = "Actual Space")
-ax=sns.lineplot(x = df["Pair Time Duration"],y= df['rf_predicted_spacing'],color="b")#,label = "RF Predicted Space")
-ax=sns.lineplot(x = df["Pair Time Duration"],y= df['knn_predicted_spacing'],color="orange")#,label = "KNN Predicted Space")
-ax=sns.lineplot(x = df["Pair Time Duration"],y= df['cnn_predicted_spacing'],color="purple")#,label = "CNN Predicted Space")
-for line, name in zip(ax.lines, df[['Actual Velocity','rf_predicted_velocity','knn_predicted_acceleration','cnn_predicted_acceleration']].columns):
-    y = line.get_ydata()[-1]
-    ax.annotate(name, xy=(0.949, y), xytext=(6, 0),
-                       color=line.get_color(), xycoords=ax.get_yaxis_transform(),
-                      textcoords="offset points", size=15, va = "center")
+sns.lineplot(x = df["Pair Time Duration"],y= df['Actual Spacing'],color="black",label = "Actual Spacing")
+ax=sns.lineplot(x = df["Pair Time Duration"],y= df['rf_predicted_spacing'],color="b",label = "RF Predicted Spacing")
+ax=sns.lineplot(x = df["Pair Time Duration"],y= df['knn_predicted_spacing'],color="orange",label = "KNN Predicted Spacing")
+ax=sns.lineplot(x = df["Pair Time Duration"],y= df['cnn_predicted_spacing'],color="purple",label = "CNN Predicted Spacing")
+plt.legend(bbox_to_anchor =(1.075, 1.0), ncol = 1)
+#for line, name in zip(ax.lines, df[['Actual Velocity','rf_predicted_velocity','knn_predicted_acceleration','cnn_predicted_acceleration']].columns):
+ ##  ax.annotate(name, xy=(0.949, y), xytext=(6, 0),
+   #                    color=line.get_color(), xycoords=ax.get_yaxis_transform(),
+    #                  textcoords="offset points", size=15, va = "center")
 #plt.legend(bbox_to_anchor =(1.075, 1.0), ncol = 1)
 ax.spines['right'].set_visible(False)
 ax.spines['top'].set_visible(False)
@@ -188,7 +188,7 @@ def jerk(df,actual,prediction,actual_label, prediction_label,title):
 #12
 fig6, ax = plt.subplots()
 #plt.figure(figsize=(15, 9))
-plt.title("Actual Subject Jerk vs RF Predicted Jerk", color = "grey", size = 18)
+plt.title("Actual Subject Jerk vs RF Predicted Jerk", color = "red", size = 18)
 plt.xlabel("Time Duration (s)", color = "black", size = 18)
 plt.ylabel("Jerk (m/s^2)", color = "black", size = 18)
 plt.xticks( range(0,60,5) )
@@ -205,7 +205,7 @@ ax.tick_params(left = False, bottom = False)
 
 fig7, ax = plt.subplots()
 #plt.figure(figsize=(15, 9))
-plt.title("Actual Subject Jerk vs KNN Predicted Jerk", color = "grey", size = 18)
+plt.title("Actual Subject Jerk vs KNN Predicted Jerk", color = "red", size = 18)
 plt.xlabel("Time Duration (s)", color = "black", size = 18)
 plt.ylabel("Jerk (m/s^2)", color = "black", size = 18)
 plt.xticks( range(0,60,5) )
@@ -221,7 +221,7 @@ ax.tick_params(left = False, bottom = False)
 
 fig8, ax = plt.subplots()
 #plt.figure(figsize=(15, 9))
-plt.title("Actual Subject Jerk vs CNN Predicted Jerk", color = "grey", size = 18)
+plt.title("Actual Subject Jerk vs CNN Predicted Jerk", color = "red", size = 18)
 plt.xlabel("Time Duration (s)", color = "black", size = 18)
 plt.ylabel("Jerk (m/s^2)", color = "black", size = 18)
 plt.xticks( range(0,60,5) )
@@ -237,29 +237,31 @@ ax.tick_params(left = False, bottom = False)
 
 
 
-plot_selection = st.sidebar.selectbox('Plot Selection',('All','Velocity', 'Acceleration', 'Jerk', 'Space'))
+plot_selection = st.sidebar.selectbox('Plot Selection',('All','Velocity', 'Acceleration', 'Jerk', 'Spacing'))
 
-if plot_selection == 'Velocity':
-    st.plotly_chart(fig1)
-elif plot_selection == 'Acceleration':
+if plot_selection == 'Acceleration':
     st.pyplot(fig3)
     st.pyplot(fig4)
     st.pyplot(fig5)
+elif plot_selection == 'Velocity':
+    st.pyplot(fig1)
+elif plot_selection == 'Spacing':
+    st.pyplot(fig2)
 elif plot_selection == 'Jerk':
     st.pyplot(fig6)
     st.pyplot(fig7)
     st.pyplot(fig8)  
-elif plot_selection == 'Space':
-    st.pyplot(fig2)
+
 else:
-    st.pyplot(fig1)
     st.pyplot(fig3)
     st.pyplot(fig4)
-    st.pyplot(fig5)   
+    st.pyplot(fig5)
+    st.pyplot(fig1)
+    st.pyplot(fig2)   
     st.pyplot(fig6)
     st.pyplot(fig7)
     st.pyplot(fig8)
-    st.pyplot(fig2)
+
 
 
 
