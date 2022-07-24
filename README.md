@@ -6,11 +6,11 @@
 
 </br>
 
-<!---
+
 <p align="center"> 
-  <img src="images/Signal.gif" alt="Sample signal"> width="70%" height="70%">
+  <img src="images/Car Following Terms.png" alt="Car Following Terms"> width="70%" height="70%">
 </p>
--->
+
 
 <!-- TABLE OF CONTENTS -->
 <h2 id="table-of-contents"> :book: Table of Contents</h2>
@@ -36,11 +36,11 @@
         <li><a href="#Data-Transormation">Data Transormation</a></li>
       </ul>
     </li>
-    <!-- Start From here. copleted till Preprocessing-->
     <li><a href="#results-and-discussion"> ➤ Results and Discussion</a></li>
+    <!-- Start From here. -->
     <li><a href="#references"> ➤ References</a></li>
     <li><a href="#contributors"> ➤ Contributors</a></li>
-    <li><a href="#contributors"> ➤ Steps to Re-trace</a></li>
+    <li><a href="#Re-Create"> ➤ Steps to Re-trace</a></li>
   </ol>
 </details>
 
@@ -183,11 +183,11 @@ The following open source packages are used in this project:
   A total of 3 different types of vehicle data can be found in this dataset, namely Car, Truck, and Motorcycle. Most of the data were taken from the two freeways i.e., US 101 and I-80, and among the three vehicle types, data on Cars is more as compared to Trucks and Motorcycles. Therefore, we decided to work on only the Freeways. After the Preliminary analysis, we found that some vehicle IDs are present in more than one location meaning that the data from all four locations were taken separately and then merged in a single file. Hence, we separated the data based on location to carry out data cleaning and data transformation and then merge them back. 
 
 <p align="center">
-  <img src="images/NGSIM.png" alt="NGSIM.png" display="inline-block" width="80%" height="50%">
+  <img src="images/NGSIM.png" alt="NGSIM" display="inline-block" width="80%" height="50%">
 </p>
 
 <p align="center">
-  <img src="images/highways.png" alt="highways.png" display="inline-block" width="80%" height="70%">
+  <img src="images/highways.png" alt="highways" display="inline-block" width="80%" height="70%">
 </p>
 
  _The NGSIM dataset is publicly available. Please refer to the [Link](https://www.opendatanetwork.com/dataset/data.transportation.gov/8ect-6jqj)_ 
@@ -234,10 +234,6 @@ The following open source packages are used in this project:
 <p align="justify"> 
   The NGSIM (Next Generation Simulation) dataset includes vehicle trajectory details along with the information of Lead and Following vehicle IDs. Even though the dataset has been processed by the Transportation department there are quite a few instances of Bad Data and vehicle trajectories which wont help in training for a good Car following model. Thus, we have preprocessed the data as per below:
   
-<p align="center">
-  <img src="images/Preprocessing.png" alt="Preprocessing.png" display="inline-block" width="80%" height="100%">
-</p>
-
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
 
@@ -252,7 +248,10 @@ The following open source packages are used in this project:
    - Remove Lane 4 and above as they are shoulders/ramps and exits. 
    - Remove trajectories which are less than 30 seconds. 
    - Remove vehicles with Time headway greater than 10 seconds. 
+</p>
 
+<p align="center">
+  <img src="images/cleanup.png" alt="cleanup" display="inline-block" width="80%" height="100%">
 </p>
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
@@ -268,6 +267,9 @@ The following open source packages are used in this project:
    - Convert the Front - Front Space and Time Headway details to Lead Vehicle Rear Bumper to Subject Vehicle Front Bumper. 
    - Create per pair timing. 
 </p>
+<p align="center">
+  <img src="images/Transformation.png" alt="Transformation" display="inline-block" width="80%" height="100%">
+</p>
 
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
@@ -281,22 +283,22 @@ The following open source packages are used in this project:
 <p align="justify">
 <ul>
   <li>
-    Since accelerometers senses acceleration based on vibration which can be more prominent during an activity and gyroscope only senses rotational changes, accelerometers outperformed gyroscope in all our models. <br>
+    Random Forest with 150 Regressors had the best Trajectory.<br>
   </li>
   <li>
-    As the style of performing an activity differs from each person, it is difficult to aggregate those features among all subjects. So our personal models vastly outperformed our impersonal models.
+    KNN has the best results at hand with limited resources i.e. Local Machine.
   </li>
   <li>
-    It is also observed that non hand-oriented activities are classified better with sensors from smartphone and handoriented activities are classified better with sensors from smartwatch. Refer appendix for activity wise recall scores. Some key take-aways based on our results are listed below:
+    CNN has best R2 and RMSE but bad trajectories and missed prediction scales.
   </li>
   <li>
-    CNN trained on raw sensor data performed better for personal models, however it performed poorly on impersonal models.
+    All three models are able to meet the trajectory oscillations.
   </li>
 </ul>
 </p>
 
 <p align="center">
-  <img src="images/Personal and Impersonal Table.png" alt="Table 3 and 4" width="75%" height="75%">
+  <img src="images/Model Stats.png" alt="Stats and Model Details" width="75%" height="75%">
 </p>
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
@@ -347,24 +349,24 @@ The following open source packages are used in this project:
 <h2 id="contributors"> :scroll: Contributors</h2>
 
 <p>
-  :mortar_board: <i>All participants in this project are graduate students in the <a href="https://www.concordia.ca/ginacody/computer-science-software-eng.html">Department of Computer Science and Software Engineering</a> <b>@</b> <a href="https://www.concordia.ca/">Concordia University</a></i> <br> <br>
-  
-  :woman: <b>Divya Bhagavathiappan Shiva</b> <br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Email: <a>divya.bhagavathiappanshiva@mail.concordia.ca</a> <br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GitHub: <a href="https://github.com/divyabhagavathiappan">@divyabhagavathiappan</a> <br>
-  
-  :woman: <b>Reethu Navale</b> <br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Email: <a>reethu.navale@mail.concordia.ca</a> <br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GitHub: <a href="https://github.com/reethunavale">@reethunavale</a> <br>
+  :mortar_board: <i>All participants in this project are Student of Post Graduate Diploma in <a href="https://www.stclaircollege.ca/programs/data-analytics-business">Data Analytics for Business</a> <b>@</b> <a href="https://www.stclaircollege.ca/">St Clair College</a></i> <br> <br>
+   
+  :boy: <b>Vineet Dhamija</b> <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Email: <a>VD17@myscc.ca</a> <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GitHub: <a href="https://github.com/VineetDhamija">@ma-VineetDhamija</a> <br>
 
-  :woman: <b>Mahsa Sadat Afzali Arani</b> <br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Email: <a>m_afzali93@yahoo.com</a> <br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GitHub: <a href="https://github.com/MahsaAfzali">@MahsaAfzali</a> <br>
+  :boy: <b>Neel Chaudhari</b> <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Email: <a>NC57@myscc.ca</a> <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GitHub: <a href="https://github.com/neelschaudhari000">@ma-neelschaudhari000</a> <br>
 
-  :boy: <b>Mohammad Amin Shamshiri</b> <br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Email: <a>mohammadamin.shamshiri@mail.concordia.ca</a> <br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GitHub: <a href="https://github.com/ma-shamshiri">@ma-shamshiri</a> <br>
+  :boy: <b>Rakesh Singh</b> <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Email: <a>rs334@myscc.ca</a> <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GitHub: <a href="https://github.com/rakesh894">@ma-rakesh894</a> <br>
+  
+  :boy: <b>Umair Durrani</b> <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Email: <a>UDURRANI@stclaircollege.ca</a> <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GitHub: <a href="https://github.com/durraniu">@ma-durraniu</a> <br>
 </p>
 
 <br>
-✤ <i>This was the final project for the course COMP 6321 - Machine Learning (Fall 2020), at <a href="https://www.concordia.ca/">Concordia University</a><i>
+✤ <i>This was the final project for the course DAB402- Capstone (Summer 2022), at <a href="https://www.stclaircollege.ca/">St Clair College</a><i>
