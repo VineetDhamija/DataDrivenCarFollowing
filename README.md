@@ -37,10 +37,9 @@
       </ul>
     </li>
     <li><a href="#results-and-discussion"> ➤ Results and Discussion</a></li>
-    <!-- Start From here. -->
-    <li><a href="#references"> ➤ References</a></li>
+    <li><a href="#references"> ➤ References</a></li><!-- pending -->
     <li><a href="#contributors"> ➤ Contributors</a></li>
-    <li><a href="#Re-Create"> ➤ Steps to Re-trace</a></li>
+    <li><a href="#Re-Create"> ➤ Steps to Re-Create</a></li><!-- pending -->
   </ol>
 </details>
 
@@ -253,6 +252,7 @@ The following open source packages are used in this project:
 <p align="center">
   <img src="images/cleanup.png" alt="cleanup" display="inline-block" width="80%" height="100%">
 </p>
+
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
 
