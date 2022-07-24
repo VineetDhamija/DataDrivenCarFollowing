@@ -73,10 +73,6 @@
 
 </p>
 
-<p align="center">
-  <img src="images/WISDM Activities.png" alt="Table1: 18 Activities" width="70%" height="70%">        
-  <!--figcaption>Caption goes here</figcaption-->
-</p>
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
 
@@ -191,7 +187,7 @@ The following open source packages are used in this project:
 </p>
 
 <p align="center">
-  <img src="images/highways.png" alt="highways.png" display="inline-block" width="70%" height="70%">
+  <img src="images/highways.png" alt="highways.png" display="inline-block" width="80%" height="70%">
 </p>
 
  _The NGSIM dataset is publicly available. Please refer to the [Link](https://www.opendatanetwork.com/dataset/data.transportation.gov/8ect-6jqj)_ 
