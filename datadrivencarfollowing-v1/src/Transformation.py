@@ -8,14 +8,6 @@ class Transformation():
     Class for the definition of variables that will perform one or other transformation on the input data.
     '''
 
-    def trial_func(self):
-        '''
-        Function to verofy that the class works
-        '''
-        print("transform:Class called")  # duplicate values have been removed")
-
-        return True
-
     def convert_feet_to_metre(self, df):
         '''
         Convert the input variables which exist in Feet to Metres or Feet/Second to Metre/Second and so on. 

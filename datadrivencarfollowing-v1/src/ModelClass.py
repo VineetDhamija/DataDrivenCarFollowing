@@ -1,7 +1,6 @@
 from tensorflow.keras import layers
 from tensorflow import keras
-#from tensorflow.keras.models import Sequential
-#from tensorflow.keras.layers import Flatten, Dense, Dropout, MaxPooling2D
+
 import tensorflow
 from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
 from sklearn.ensemble import RandomForestRegressor
