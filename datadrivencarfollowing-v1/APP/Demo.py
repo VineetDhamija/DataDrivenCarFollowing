@@ -261,15 +261,3 @@ else:
     st.pyplot(fig6)
     st.pyplot(fig7)
     st.pyplot(fig8)
-
-
-
-
-
-
-
-
-
-
-
-

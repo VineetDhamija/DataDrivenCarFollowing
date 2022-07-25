@@ -503,27 +503,27 @@ class ModelClass():
     def plot_all_predictions(self, prediction_1, delta_time):
 
         prediction_1["Time Duration (s)"] = prediction_1["pair_Time_Duration"]
-        prediction_1["Actual Velocity"] = prediction_1["nextframesvel"]
-        prediction_1["Actual Acceleration"] = prediction_1["nextframeAcc"]
-        prediction_1["Actual Jerk"] = prediction_1["nextframejerk"]
-        prediction_1["Actual Spacing"] = prediction_1["nextFrameSpacing"]
+        prediction_1["Velocity (m/s)"] = prediction_1["nextframesvel"]
+        prediction_1["Acceleration (m/s^2)"] = prediction_1["nextframeAcc"]
+        prediction_1["Jerk (m/s^3)"] = prediction_1["nextframejerk"]
+        prediction_1["Space (m)"] = prediction_1["nextFrameSpacing"]
         self.combined_predicted_plots(prediction_1, 'Time Duration (s)', 'knn_predicted_acceleration', 'rf_predicted_acceleration', 'cnn_predicted_acceleration',
-                                      'Actual Acceleration', 'Acceleration (m/s^2)', delta_time, '', 'KNN')
+                                      'Acceleration (m/s^2)', 'Acceleration', delta_time, '', 'KNN')
         self.combined_predicted_plots(prediction_1, 'Time Duration (s)', 'knn_predicted_acceleration', 'rf_predicted_acceleration', 'cnn_predicted_acceleration',
-                                      'Actual Acceleration', 'Acceleration (m/s^2)', delta_time, '', 'RF')
+                                      'Acceleration (m/s^2)', 'Acceleration', delta_time, '', 'RF')
         self.combined_predicted_plots(prediction_1, 'Time Duration (s)', 'knn_predicted_acceleration', 'rf_predicted_acceleration', 'cnn_predicted_acceleration',
-                                      'Actual Acceleration', 'Acceleration (m/s^2)', delta_time, '', 'CNN')
+                                      'Acceleration (m/s^2)', 'Acceleration', delta_time, '', 'CNN')
 
         self.combined_predicted_plots(prediction_1, 'Time Duration (s)', 'knn_predicted_velocity', 'rf_predicted_velocity', 'cnn_predicted_velocity',
-                                      'Actual Velocity', 'Velocity (m/s)', delta_time, '')
+                                      'Velocity (m/s)', 'Velocity', delta_time, '')
         self.combined_predicted_plots(prediction_1, 'Time Duration (s)', 'knn_predicted_spacing', 'rf_predicted_spacing', 'cnn_predicted_spacing',
-                                      'Actual Spacing', 'Space (m)', delta_time, '')
+                                      'Space (m)', 'Space', delta_time, '')
         self.combined_predicted_plots(prediction_1, 'Time Duration (s)', 'knn_predicted_jerk', 'rf_predicted_jerk', 'cnn_predicted_jerk',
-                                      'Actual Jerk', 'Jerk (m/s^3)', delta_time, '', 'KNN')
+                                      'Jerk (m/s^3)', 'Jerk', delta_time, '', 'KNN')
         self.combined_predicted_plots(prediction_1, 'Time Duration (s)', 'knn_predicted_jerk', 'rf_predicted_jerk', 'cnn_predicted_jerk',
-                                      'Actual Jerk', 'Jerk (m/s^3)', delta_time, '', 'RF')
+                                      'Jerk (m/s^3)', 'Jerk', delta_time, '', 'RF')
         self.combined_predicted_plots(prediction_1, 'Time Duration (s)', 'knn_predicted_jerk', 'rf_predicted_jerk', 'cnn_predicted_jerk',
-                                      'Actual Jerk', 'Jerk (m/s^3)', delta_time, '', 'CNN')
+                                      'Jerk (m/s^3)', 'Jerk', delta_time, '', 'CNN')
 
         return None
 
@@ -539,7 +539,8 @@ class ModelClass():
         plt.xticks(range(0, 60, 5))
         plt.rc('xtick', labelsize=15)
         plt.rc('ytick', labelsize=15)
-        plt.xlabel("Time Duration (s)", color="black", size=18)
+        plt.xlabel('Time Duration (s)', color="black", size=18)
+
         #plt.ylabel("Velocity (m/s)", color = "black", size = 18)
         ax = sns.lineplot(x=df[col_x], y=df[actual_y],
                           color="black", label=label1)
@@ -560,6 +561,8 @@ class ModelClass():
                          color="g", label=predicted_y2, ci=None)
             sns.lineplot(x=df[col_x], y=df[predicted_y_cnn],
                          color="orange", label=predicted_y3, ci=None)
+            plt.ylabel(predicted_y3, color="black", size=18)
+        plt.ylabel(actual_y, color="black", size=18)
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
         ax.spines['left'].set_visible(False)
