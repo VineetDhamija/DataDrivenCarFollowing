@@ -1,2 +1,1 @@
-*.ipynb filter=lfs diff=lfs merge=lfs -text
-datadrivencarfollowing-v1/results/Visualize[[:space:]]Test[[:space:]]Sets.html filter=lfs diff=lfs merge=lfs -text
+datadrivencarfollowing-v1/results/Visualize[[:space:]]Test[[:space:]]Sets.html  -text

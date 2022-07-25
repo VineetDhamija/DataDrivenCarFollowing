@@ -37,9 +37,11 @@
       </ul>
     </li>
     <li><a href="#results-and-discussion"> ➤ Results and Discussion</a></li>
+    <li><a href="#Re-Create"> ➤ Steps to Re-Create</a></li>
+    <li><a href="#TroubleShoot"> ➤ TroubleShoot</a></li>
     <li><a href="#references"> ➤ References</a></li><!-- pending -->
     <li><a href="#contributors"> ➤ Contributors</a></li>
-    <li><a href="#Re-Create"> ➤ Steps to Re-Create</a></li><!-- pending -->
+    
   </ol>
 </details>
 
@@ -94,7 +96,7 @@ The following open source packages are used in this project:
 * random
 * seaborn
 * pickle
-
+* streamlit
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
 
@@ -300,6 +302,64 @@ The following open source packages are used in this project:
 <p align="center">
   <img src="images/Model Stats.png" alt="Stats and Model Details" width="75%" height="75%">
 </p>
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
+
+<h2 id="Re-Create"> :cactus: Re-Create Steps</h2>
+
+Details of scripts and python files are mentioned at the end for quick reference.
+
+Below Steps need to be followed to re-create the results or clone the project to run on new NGSIM version.
+1. Clone the repo from git and open in your GUI of choice. 
+2. Ensure that all the dependencies mentioned in  <a href="#prerequisites"> ➤ Prerequisites</a> are met. 
+3. Environment.yml can be referenced for the packages and their versions. Below command can be used to clone the environment <br>
+    (cb) $ conda env update --prefix ./env --file environment.yml --prune
+4. Install the src directory which contains all the python classes required in the Jupyter notebooks:
+    pip install -e .
+5. The details of which script to run are mentioned below as per the need:
+  1. Download NGSIM file from [here](https://data.transportation.gov/Automobiles/Next-Generation-Simulation-NGSIM-Vehicle-Trajector/8ect-6jqj) and place it in the data folder with name Next_Generation_Simulation__NGSIM__Vehicle_Trajectories_and_Supporting_Data.csv
+  2. Execute script/Data-Cleanup_Transformation_Test_Train_Split.ipynb and it would Clean, transform and split the input NGSIM data into Train/Validate/Test/sample Prediction pairs. (These pairs would be differnet then ours based on random selection from the dataset, slight variations to the results and numbers could be observed)
+    - The Division is 3 pairs each of >60 seconds car following trajectory for each vehicle combination Car-Car, Car-HV, HV-Car
+    - Rest data is divided into 80/10/10 percentages. 
+  3. Execute below scripts from scripts folder to train, fit and store the ML Models in the scripts folder. These can be validated against the time it took for us to run and the storage its taking in your system. If the variation is too much, NGSIM data may have changed. Refer the Data dictionary in the docs to validate.
+   - Save Model for various Reaction Times-KNN.ipynb
+   - Save Model for various Reaction Times-Neural.ipynb
+   - Save Model for various Reaction Times-Random Forest.ipynb
+  4. Once the models are saved in the scripts folder, move all the models from Scripts to Data folder manually, This is to ensure that you only do this once and even if the save model is executed multiple times the models arent over written.
+  5. Depending upon which dataset Prediction is required, run the below files to exither Predict the Prediction Set or the entire Test Set. Prediction set is the small subset of 3 vehicle pairs to view the outputs. The names of the scripts are self explanatory to decide which one to run. Each run saves the corresponding files in the Data folder. 
+   - Predict All Models-Prediction Set.ipynb 
+   - Predict All Models-Test Set.ipynb
+   - Predict CNN-Prediction Set.ipynb
+   - Predict CNN-Test Dataset.ipynb
+   - Predict KNN-Prediction Set.ipynb
+   - Predict KNN-Test Dataset.ipynb
+   - Predict Random Forest-Prediction Set.ipynb
+   - Predict Random Forest-Test Dataset.ipynb
+  6. Based upon the run of the above scripts the plots can be visualized 
+   - Visualize Prediction Sets.ipynb ==>This would display all Prediction Set pairs trajectories. 
+   - Visualize Test Sets.ipynb ==>This would display all Test Set pairs trajectories. 
+  7. Execute the below Script to verify the RMSE and R2 for the Test set:
+   - Calculate R2 and RMSE.ipynb
+  8. Below scripts are not required to be run in order to generate the trajectory pairs, but would help in understanding and cloning the models if required. Each file is a standalone implementation of Fit, run predict for first pair from the test dataset. This can be tweaked to play with any of the Model:
+    - Model Application-CNN.ipynb
+    - Model Application-KNN.ipynb
+    - Model Application-Random Forest.ipynb
+  9. Below are the details to run the demo App:
+    - open command prompt
+    - run command: conda activate "environment name"
+    - run command: cd "path to the APP folder"
+    - run command: streamlit run Demo.py
+  10. Other Scripts for reference:
+   - Cleaned Data set Stats.ipynb ==> will provide stats for the cleaned dataset
+   - Ethics_Checklist_Group5_Section03.ipynb =>Ethical Checklist for the Project. 
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
+
+<h2 id="TroubleShoot"> :cactus: TroubleShoot Steps</h2>
+
+Below are a few possible scenarios which may give you error, along with their probable solution
+
+1. Imports dependencies fail in python files: Verify the versions match which are mentioned in the environment yml. tensor and keras had few dependencies which havent been fixed in the latest versions. 
+2. src imports for Transformation /Cleanup or File Processing failing: This means the src module load has failed, backup option is add PYTHONPATH variable with the path of the src directory in the System Environment variables. This will manually add the src directory in your Python Path.
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
 
