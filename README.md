@@ -302,6 +302,7 @@ The following open source packages are used in this project:
 <p align="center">
   <img src="images/Model Stats.png" alt="Stats and Model Details" width="75%" height="75%">
 </p>
+
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
 
 <h2 id="Re-Create"> :cactus: Re-Create Steps</h2>
