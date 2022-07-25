@@ -361,6 +361,7 @@ Below are a few possible scenarios which may give you error, along with their pr
 
 1. Imports dependencies fail in python files: Verify the versions match which are mentioned in the environment yml. tensor and keras had few dependencies which havent been fixed in the latest versions. 
 2. src imports for Transformation /Cleanup or File Processing failing: This means the src module load has failed, backup option is add PYTHONPATH variable with the path of the src directory in the System Environment variables. This will manually add the src directory in your Python Path.
+3. In case of Json error on any of the scripts, means that the file is incorrectly downloaded from github. In that case, entire git hub Repo should be downloaded rather than just 1 script. In case that still fails, try comparing the same script from either Alpha or Bravo branch in github, there might be minor changes else drop me an email and we will share the latest version of that script. 
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
 
