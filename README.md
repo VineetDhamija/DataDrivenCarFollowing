@@ -413,19 +413,24 @@ Below are a few possible scenarios which may give you error, along with their pr
 <p>
   :mortar_board: <i>All participants in this project are Student of Post Graduate Diploma in <a href="https://www.stclaircollege.ca/programs/data-analytics-business">Data Analytics for Business</a> <b>@</b> <a href="https://www.stclaircollege.ca/">St Clair College</a></i> <br> <br>
    
-  :boy: <b>Vineet Dhamija</b> <br>
+  :man_student: <b>Vineet Dhamija</b> <br>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Email: <a>VD17@myscc.ca</a> <br>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GitHub: <a href="https://github.com/VineetDhamija">@ma-VineetDhamija</a> <br>
 
-  :boy: <b>Neel Chaudhari</b> <br>
+  :man_student: <b>Neel Chaudhari</b> <br>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Email: <a>NC57@myscc.ca</a> <br>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GitHub: <a href="https://github.com/neelschaudhari000">@ma-neelschaudhari000</a> <br>
 
-  :boy: <b>Rakesh Singh</b> <br>
+  :man_student: <b>Rakesh Singh</b> <br>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Email: <a>rs334@myscc.ca</a> <br>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GitHub: <a href="https://github.com/rakesh894">@ma-rakesh894</a> <br>
   
-  :boy: <b>Umair Durrani</b> <br>
+</p>
+<br><br>
+<p>
+  :mortar_board: <i>Special Thanks to our Professor for guidance along the way</i> <br> <br>
+     
+  🧑‍🏫 <b>Umair Durrani</b> <br>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Email: <a>UDURRANI@stclaircollege.ca</a> <br>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GitHub: <a href="https://github.com/durraniu">@ma-durraniu</a> <br>
 </p>
