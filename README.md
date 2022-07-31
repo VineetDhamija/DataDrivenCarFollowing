@@ -426,7 +426,7 @@ Below are a few possible scenarios which may give you error, along with their pr
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GitHub: <a href="https://github.com/rakesh894">@ma-rakesh894</a> <br>
   
 </p>
-
+<br><br><br>
 <p>
   :mortar_board: <i>Special Thanks to our Professor for guidance along the way</i> <br> <br>
      
