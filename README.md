@@ -8,7 +8,7 @@
 
 
 <p align="center"> 
-  <img src="images/Car Following Terms.png" alt="Car Following Terms"> width="70%" height="70%">
+  <img src="images/Car Following Terms.png" alt="Car Following Terms"> 
 </p>
 
 
